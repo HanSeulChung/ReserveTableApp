@@ -3,14 +3,15 @@ package com.chs.admin.entity;
 import com.chs.type.MemberStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @ToString
@@ -20,9 +21,8 @@ import java.util.Collection;
 @Builder
 public class Owner implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String Id;
-    private String name;
+    private String userId;
+    private String userName;
     private String phone;
     private String password;
     private LocalDateTime regDt;
@@ -32,11 +32,11 @@ public class Owner implements UserDetails {
     private MemberStatus status;  //이용가능한상태, 정지상태
     private LocalDateTime lastLoginDt;
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
+        return grantedAuthorities;
     }
 
     @Override

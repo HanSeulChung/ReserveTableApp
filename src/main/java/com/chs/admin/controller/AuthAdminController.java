@@ -36,8 +36,8 @@ public class AuthAdminController {
     public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
         // 로그인 API
         var member = this.userService.authenticate(request);
-        var token = this.tokenProvider.generateUserToken(member.getName());
-        log.info("user login -> " + request.getUsername());
+        var token = this.tokenProvider.generateUserToken(member.getUserId());
+        log.info("user login -> " + request.getUserId());
         return ResponseEntity.ok(token);
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,11 +29,11 @@ public class TokenProvider {
 
     /**
      * 토큰 생성(발급)
-     * @param username
+     * @param userId
      * @return
      */
-    public String generateUserToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String generateUserToken(String userId) {
+        Claims claims = Jwts.claims().setSubject(userId);
 
         var now = new Date();
         var expireDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
@@ -47,8 +46,8 @@ public class TokenProvider {
                 .compact();
     }
 
-    public String generateOwnerToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String generateOwnerToken(String userId) {
+        Claims claims = Jwts.claims().setSubject(userId);
 
         var now = new Date();
         var expireDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
@@ -62,11 +61,11 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.userService.loadUserByUsername(this.getUsername(jwt));
+        UserDetails userDetails = this.userService.loadUserByUsername(this.getUserId(jwt));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {
+    public String getUserId(String token) {
         return this.parseClaims(token).getSubject();
     }
 

@@ -23,9 +23,8 @@ import java.util.List;
 @Builder
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String Id;
-    private String name;
+    private String userId;
+    private String userName;
     private String phone;
     private String password;
     private LocalDateTime regDt;

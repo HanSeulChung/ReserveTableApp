@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class UserDto {
-    private String Id;
-    private String name;
+    private String userId;
+    private String userName;
     private String phone;
     private String password;
     private LocalDateTime regDt;
@@ -29,8 +29,8 @@ public class UserDto {
     public static UserDto of(User user) {
 
         return UserDto.builder()
-                .Id(user.getId())
-                .name(user.getName())
+                .userId(user.getUserId())
+                .userName(user.getUsername())
                 .phone(user.getPhone())
                 .regDt(user.getRegDt())
                 .udtDt(user.getUdtDt())

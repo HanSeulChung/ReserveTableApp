@@ -35,8 +35,8 @@ public class AuthController {
     public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
         // 로그인 API
         var user = this.userService.authenticate(request);
-        var token = this.tokenProvider.generateUserToken(user.getName());
-        log.info("user login -> " + request.getUsername());
+        var token = this.tokenProvider.generateUserToken(user.getUserId());
+        log.info("user login -> " + request.getUserId());
         return ResponseEntity.ok(token);
     }
 }

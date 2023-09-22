@@ -4,23 +4,38 @@ import com.chs.member.Auth;
 import com.chs.member.dto.MemberInput;
 import com.chs.member.dto.UserDto;
 import com.chs.member.entity.User;
+import com.chs.member.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService{
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return userRepository.findByUserId(username)
+                .orElseThrow(() -> new RuntimeException("user가 없습니다."));
     }
 
     @Override
     public UserDto register(Auth.SignUp member) {
-        return null;
+        boolean exits = this.userRepository.existsByUserId(member.getUserId()) ;
+        if (exits) {
+            throw new RuntimeException("이미 존재하는 아이디입니다.");
+        }
+
+        member.setPassword(this.passwordEncoder.encode(member.getPassword()));
+        var result = this.userRepository.save(member.toUserEntity());
+        return UserDto.of(result);
     }
 
     @Override
