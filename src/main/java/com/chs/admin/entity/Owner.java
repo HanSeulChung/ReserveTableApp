@@ -6,12 +6,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @ToString
@@ -27,6 +30,7 @@ public class Owner implements UserDetails {
     private String password;
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
+
     private boolean adminYn;
 
     private MemberStatus status;  //이용가능한상태, 정지상태

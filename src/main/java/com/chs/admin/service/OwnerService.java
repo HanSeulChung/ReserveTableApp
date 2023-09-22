@@ -1,6 +1,8 @@
 package com.chs.admin.service;
 
 import com.chs.admin.dto.OwnerDto;
+import com.chs.admin.dto.StoreDto;
+import com.chs.admin.dto.StoreInput;
 import com.chs.member.dto.MemberInput;
 import com.chs.member.model.Auth;
 import org.springframework.security.core.userdetails.UserDetailsService;

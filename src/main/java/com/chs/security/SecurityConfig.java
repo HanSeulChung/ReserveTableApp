@@ -38,13 +38,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .authorizeRequests()
+                .antMatchers("/auth/admin/register/store").hasAuthority("ROLE_OWNER")
+                .antMatchers("/**/signup", "/**/signin").permitAll()
+                .anyRequest().authenticated();
+
+        http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/**/signup", "/**/signin").permitAll()
-                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http
                 .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

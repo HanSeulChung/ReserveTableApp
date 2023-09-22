@@ -1,6 +1,12 @@
 package com.chs.type;
 
 public enum ReservationCode {
+
+    /**
+     * 예약 확인중
+     */
+    CHECKING,
+
     /**
      * 예약 승인
      */

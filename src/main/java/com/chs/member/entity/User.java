@@ -6,10 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +26,7 @@ public class User implements UserDetails {
     private String password;
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
+
     private boolean adminYn;
 
     private MemberStatus status;  //이용가능한상태, 정지상태

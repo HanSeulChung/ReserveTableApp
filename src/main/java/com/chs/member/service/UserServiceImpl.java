@@ -1,29 +1,49 @@
 package com.chs.member.service;
 
+import com.chs.admin.entity.Owner;
+import com.chs.admin.repository.OwnerRepository;
 import com.chs.member.model.Auth;
 import com.chs.member.dto.MemberInput;
 import com.chs.member.dto.UserDto;
 import com.chs.member.entity.User;
 import com.chs.member.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUserId(username)
-                .orElseThrow(() -> new RuntimeException("user가 없습니다."));
+
+        Optional<User> user = userRepository.findByUserId(username);
+        Optional<Owner> owner = ownerRepository.findByUserId(username);
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
+       if (owner.isPresent()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
+            return new org.springframework.security.core.userdetails.User(
+                    owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
+        } else if (user.isPresent()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            return new org.springframework.security.core.userdetails.User(
+                    user.get().getUserId(), user.get().getPassword(), grantedAuthorities);
+        }
+        throw new UsernameNotFoundException("user가 없습니다.");
     }
 
     @Override
