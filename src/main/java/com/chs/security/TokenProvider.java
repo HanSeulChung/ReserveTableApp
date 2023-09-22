@@ -1,5 +1,6 @@
-package com.chs.member.service;
+package com.chs.security;
 
+import com.chs.member.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -18,8 +19,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class TokenProvider {
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 1 hour
-
-    private static final String KEY_ROLES = "roles";
 
     private final UserService userService;
 

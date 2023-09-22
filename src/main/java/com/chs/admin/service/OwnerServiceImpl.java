@@ -1,10 +1,9 @@
-package com.chs.member.service;
+package com.chs.admin.service;
 
-import com.chs.member.model.Auth;
+import com.chs.admin.dto.OwnerDto;
+import com.chs.admin.repository.OwnerRepository;
 import com.chs.member.dto.MemberInput;
-import com.chs.member.dto.UserDto;
-import com.chs.member.entity.User;
-import com.chs.member.repository.UserRepository;
+import com.chs.member.model.Auth;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,48 +15,46 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl implements UserService{
-
-    private final UserRepository userRepository;
+public class OwnerServiceImpl implements OwnerService{
+    private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUserId(username)
+        return ownerRepository.findByUserId(username)
                 .orElseThrow(() -> new RuntimeException("user가 없습니다."));
     }
-
     @Override
-    public UserDto register(Auth.SignUp member) {
-        boolean exits = this.userRepository.existsByUserId(member.getUserId()) ;
+    public OwnerDto register(Auth.SignUp member) {
+        boolean exits = this.ownerRepository.existsByUserId(member.getUserId()) ;
         if (exits) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.userRepository.save(member.toUserEntity());
-        return UserDto.of(result);
+        var result = this.ownerRepository.save(member.toOwnerEntity());
+        return OwnerDto.of(result);
     }
 
     @Override
-    public UserDto authenticate(Auth.SignIn member) {
-
-        var user = this.userRepository.findByUserId(member.getUserId())
+    public OwnerDto authenticate(Auth.SignIn member) {
+        var user = this.ownerRepository.findByUserId(member.getUserId())
                 .orElseThrow(() -> new RuntimeException("해당 아이디가 존재하지 않습니다."));
 
         if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        return UserDto.of(user);
+        return OwnerDto.of(user);
     }
 
     @Override
-    public List<UserDto> list(Auth.SignIn member) {
+    public List<OwnerDto> list(Auth.SignIn member) {
         return null;
     }
 
     @Override
-    public UserDto detail(String userId) {
+    public OwnerDto detail(String userId) {
         return null;
     }
 
@@ -72,17 +69,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User updateMember(Auth.SignIn member) {
+    public OwnerDto updateMember(Auth.SignIn member) {
         return null;
     }
 
     @Override
-    public UserDto updateMemberPassword(MemberInput parameter) {
+    public OwnerDto updateMemberPassword(MemberInput parameter) {
         return null;
     }
 
     @Override
-    public UserDto withdraw(String userId, String password) {
+    public OwnerDto withdraw(String userId, String password) {
         return null;
     }
 
@@ -90,4 +87,5 @@ public class UserServiceImpl implements UserService{
     public void updateLastLoginDt(String userId, LocalDateTime lastLoginDt) {
 
     }
+
 }

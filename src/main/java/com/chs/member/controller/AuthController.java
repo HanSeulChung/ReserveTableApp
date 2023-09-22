@@ -1,7 +1,7 @@
 package com.chs.member.controller;
 
-import com.chs.member.Auth;
-import com.chs.member.service.TokenProvider;
+import com.chs.member.model.Auth;
+import com.chs.security.TokenProvider;
 import com.chs.member.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.chs.member;
+package com.chs.member.model;
 
 import com.chs.admin.entity.Owner;
 import com.chs.member.entity.User;
@@ -21,7 +21,6 @@ public class Auth {
         private String userName;
         private String phone;
         private String password;
-        private boolean adminYn;
 
         public User toUserEntity() {
             return User.builder()
@@ -31,7 +30,6 @@ public class Auth {
                     .password(this.password)
                     .adminYn(false)
                     .regDt(LocalDateTime.now())
-                    .adminYn(false)
                     .penalty(0)
                     .status(MemberStatus.ING)
                     .build();
@@ -43,9 +41,8 @@ public class Auth {
                     .userName(this.userName)
                     .phone(this.phone)
                     .password(this.password)
-                    .adminYn(false)
+                    .adminYn(true)
                     .regDt(LocalDateTime.now())
-                    .adminYn(adminYn)
                     .status(MemberStatus.ING)
                     .build();
         }

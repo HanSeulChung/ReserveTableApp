@@ -1,7 +1,6 @@
 package com.chs.security;
 
 
-import com.chs.member.service.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
