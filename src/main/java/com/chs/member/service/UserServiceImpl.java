@@ -7,6 +7,7 @@ import com.chs.member.dto.MemberInput;
 import com.chs.member.dto.UserDto;
 import com.chs.member.entity.User;
 import com.chs.member.repository.UserRepository;
+import com.chs.type.MemberStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -82,8 +83,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public boolean updateStatus(String userId, String userStatus) {
-        return false;
+    public boolean updateStatus(String userId, MemberStatus userStatus) {
+
+        Optional<User> user = userRepository.findByUserId(userId);
+        if (!user.isPresent()) {
+            throw new RuntimeException("존재하지 않는 회원입니다.");
+        }
+        if (user.get().getStatus().equals(MemberStatus.WITHDRAW)) {
+            throw new RuntimeException("이미 탈퇴한 회원입니다.");
+        }
+
+        UserDto userDto = UserDto.of(user.get());
+        userDto.setStatus(userStatus);
+        userRepository.save(User.toEntity(userDto));
+
+        return true;
     }
 
     @Override

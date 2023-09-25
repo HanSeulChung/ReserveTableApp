@@ -23,7 +23,7 @@ public class TokenProvider {
     private final UserService userService;
 
     @Value("{spring.jwt.secret}")
-    private String secreteKey;
+    private String secretKey;
 
 
     /**
@@ -41,7 +41,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(expireDate) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, this.secreteKey) // 사용할 암호화 알고리즘, 비밀키
+                .signWith(SignatureAlgorithm.HS512, this.secretKey) // 사용할 암호화 알고리즘, 비밀키
                 .compact();
     }
 
@@ -55,7 +55,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(expireDate) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, this.secreteKey) // 사용할 암호화 알고리즘, 비밀키
+                .signWith(SignatureAlgorithm.HS512, this.secretKey) // 사용할 암호화 알고리즘, 비밀키
                 .compact();
     }
 
@@ -79,7 +79,7 @@ public class TokenProvider {
 
     private Claims parseClaims(String token) {
         try {
-            return Jwts.parser().setSigningKey(this.secreteKey).parseClaimsJws(token).getBody();
+            return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

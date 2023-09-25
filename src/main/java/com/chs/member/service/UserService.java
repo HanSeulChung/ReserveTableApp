@@ -4,6 +4,7 @@ import com.chs.member.model.Auth;
 import com.chs.member.dto.MemberInput;
 import com.chs.member.dto.UserDto;
 import com.chs.member.entity.User;
+import com.chs.type.MemberStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ public interface UserService  extends UserDetailsService {
     /**
      * 회원 상태 변경
      */
-    boolean updateStatus(String userId, String userStatus);
+    boolean updateStatus(String userId, MemberStatus userStatus);
 
     /**
      * 회원 비밀번호 초기화

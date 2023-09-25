@@ -22,25 +22,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**",
+            "/h2-console/**"
+    };
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(AUTH_WHITELIST);
+    }
     @Bean
     @Override
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-                .antMatchers("/h2-console/**", "/swagger-ui/**");
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/auth/admin/register/store").hasAuthority("ROLE_OWNER")
-                .antMatchers("/**/signup", "/**/signin").permitAll()
+                .antMatchers("/auth/admin/register/store", "/auth/admin/delete/store", "/auth/admin/update/store", "/auth/admin/read/store").hasAuthority("ROLE_OWNER")
+                .antMatchers("/store/reserve").hasAuthority("ROLE_USER")
+                .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll()
                 .anyRequest().authenticated();
 
         http

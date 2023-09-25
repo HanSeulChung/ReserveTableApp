@@ -8,12 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class StoreDto {
+    private Long storeId;
+    private String ownerId;
     private String storeName ;
     private String phone;
     private String addr;
@@ -23,9 +27,25 @@ public class StoreDto {
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
 
+
+    public static List<StoreDto> of(List<Store> stores) {
+
+        if (stores != null) {
+            List<StoreDto> storeDtoList = new ArrayList<>();
+            for(Store x : stores) {
+                storeDtoList.add(of(x));
+            }
+            return storeDtoList;
+        }
+
+        return null;
+    }
+
     public static StoreDto of(Store store) {
 
         return StoreDto.builder()
+                .ownerId(store.getOwnerId())
+                .storeId(store.getId())
                 .storeName(store.getStoreName())
                 .phone(store.getPhone())
                 .addr(store.getAddr())
@@ -36,8 +56,9 @@ public class StoreDto {
                 .build();
     }
 
-    public static StoreDto fromInput(StoreInput storeInput) {
+    public static StoreDto fromInput(StoreInput storeInput, String ownerId) {
         return StoreDto.builder()
+                .ownerId(ownerId)
                 .storeName(storeInput.getStoreName())
                 .phone(storeInput.getPhone())
                 .addr(storeInput.getAddr())
@@ -46,4 +67,10 @@ public class StoreDto {
                 .regDt(LocalDateTime.now())
                 .build();
     }
+
+//    public static StoreDto fromEditInput(StoreEditInput storeEditInput) {
+//        return StoreDto.builder()
+//                .storeName()
+//                .build();
+//    }
 }

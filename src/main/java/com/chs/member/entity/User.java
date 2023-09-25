@@ -1,5 +1,6 @@
 package com.chs.member.entity;
 
+import com.chs.member.dto.UserDto;
 import com.chs.type.MemberStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,21 @@ public class User implements UserDetails {
     private LocalDateTime lastLoginDt;
 
     private int penalty;
+
+    public static User toEntity(UserDto userDto) {
+        return User.builder()
+                .userId(userDto.getUserId())
+                .userName(userDto.getUserName())
+                .phone(userDto.getPhone())
+                .password(userDto.getPassword())
+                .penalty(userDto.getPenalty())
+                .regDt(userDto.getRegDt())
+                .udtDt(LocalDateTime.now())
+                .adminYn(userDto.isAdminYn())
+                .status(userDto.getStatus())
+                .lastLoginDt(userDto.getLastLoginDt())
+                .build();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

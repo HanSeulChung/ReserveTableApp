@@ -5,7 +5,7 @@ public enum ReservationCode {
     /**
      * 예약 확인중
      */
-    CHECKING,
+    WAITING,
 
     /**
      * 예약 승인
