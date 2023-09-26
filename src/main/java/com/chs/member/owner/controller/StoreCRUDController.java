@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/auth/admin")
+@RequestMapping("/auth/owner")
 @RequiredArgsConstructor
 public class StoreCRUDController {
 
@@ -28,14 +28,19 @@ public class StoreCRUDController {
     }
 
     @DeleteMapping("delete/store")
-    public ResponseEntity<?> deleteStore(@RequestParam Long storeId, @RequestParam String storeName) {
-        storeService.deleteStore(storeId, storeName);
+    public ResponseEntity<?> deleteStore(@RequestParam Long storeId,
+                                         @RequestParam String storeName,
+                                         @RequestHeader("Authorization") String token) {
+        String ownerId = tokenProvider.getUserId(token.substring("Bearer ".length()));
+        storeService.deleteStore(storeId, storeName, ownerId);
         return ResponseEntity.ok("해당 매장이 삭제되었습니다.");
     }
 
     @PostMapping("update/store")
-    public ResponseEntity<?> updateStore(@RequestBody StoreEditInput request) {
-        var result = storeService.updateStore(request);
+    public ResponseEntity<?> updateStore(@RequestBody StoreEditInput request,
+                                         @RequestHeader("Authorization") String token) {
+        String ownerId = tokenProvider.getUserId(token.substring("Bearer ".length()));
+        var result = storeService.updateStore(request, ownerId);
         return ResponseEntity.ok(result);
     }
 

@@ -1,5 +1,8 @@
 package com.chs.member.owner.service;
 
+import com.chs.exception.Impl.NoStoreException;
+import com.chs.exception.Impl.UnmatchOwnerStoreException;
+import com.chs.exception.Impl.UnmatchStoreIdAndNameException;
 import com.chs.member.owner.dto.StoreDto;
 import com.chs.member.owner.dto.StoreInput;
 import com.chs.member.owner.entity.Store;
@@ -8,6 +11,7 @@ import com.chs.member.owner.dto.StoreEditInput;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -52,24 +56,40 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
-    public void deleteStore(Long storeId, String storeName) {
+    public void deleteStore(Long storeId, String storeName, String ownerId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NoStoreException());
+
+        if (!store.getOwnerId().equals(ownerId)) {
+            throw new UnmatchOwnerStoreException();
+        }
+        if (!store.getStoreName().equals(storeName)) {
+            throw new UnmatchStoreIdAndNameException();
+        }
         storeRepository.deleteAllByIdAndStoreName(storeId, storeName);
     }
 
     @Override
-    public StoreDto updateStore(StoreEditInput parameter) {
-        Optional<Store> store = storeRepository.findById(parameter.getStoreId());
-        Store storeEntity = store.get();
+    public StoreDto updateStore(StoreEditInput parameter, String ownerId) {
+        Store store = storeRepository.findById(parameter.getStoreId())
+                .orElseThrow(() -> new NoStoreException());
 
-        StoreDto storeDto = StoreDto.of(storeEntity);
-        storeDto.setStoreName(parameter.getStoreName());
-        storeDto.setPhone(parameter.getPhone());
-        storeDto.setAddr(parameter.getAddr());
-        storeDto.setAddrDetail(parameter.getAddrDetail());
-        storeDto.setUdtDt(LocalDateTime.now());
-        storeDto.setDescription(parameter.getDescription());
+        if (!store.getOwnerId().equals(ownerId)) {
+            throw new UnmatchOwnerStoreException();
+        }
 
-        storeRepository.save(Store.toEntity(storeDto));
-        return storeDto;
+        return StoreDto.of(storeRepository.save(
+                Store.builder()
+                        .id(store.getId())
+                        .storeName(parameter.getStoreName())
+                        .addr(parameter.getAddr())
+                        .addrDetail(parameter.getAddrDetail())
+                        .description(parameter.getDescription())
+                        .phone(parameter.getPhone())
+                        .regDt(store.getRegDt())
+                        .udtDt(LocalDateTime.now())
+                        .ownerId(store.getOwnerId())
+                        .build()
+        ));
     }
 }

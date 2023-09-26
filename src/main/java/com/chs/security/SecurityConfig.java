@@ -30,6 +30,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/h2-console/**"
     };
 
+    private static final String[] AUTH_OWNERLIST = {
+            "/auth/onwer/register/store",
+            "/auth/owner/delete/store",
+            "/auth/owner/update/store",
+            "/auth/owner/read/store",
+            "/auth/owner/reservation/all"
+    };
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(AUTH_WHITELIST);
@@ -45,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/auth/admin/register/store", "/auth/admin/delete/store", "/auth/admin/update/store", "/auth/admin/read/store").hasAuthority("ROLE_OWNER")
+                .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
                 .antMatchers("/store/reserve").hasAuthority("ROLE_USER")
                 .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll()
                 .anyRequest().authenticated();

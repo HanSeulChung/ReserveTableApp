@@ -35,12 +35,12 @@ public interface StoreService {
     /**
      * 가게 삭제
      */
-    void deleteStore(Long storeId, String storeName);
+    void deleteStore(Long storeId, String storeName, String ownerId);
 
     /**
      * 가게 수정
      */
-    StoreDto updateStore(StoreEditInput storeInput);
+    StoreDto updateStore(StoreEditInput storeInput, String ownerId);
 
     /**
      * 가게 주인이 등록한 가게 조회(auth/admin 기능)
