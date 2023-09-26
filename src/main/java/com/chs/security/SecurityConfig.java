@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
@@ -31,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] AUTH_OWNERLIST = {
-            "/auth/onwer/register/store",
+            "/auth/owner/register/store",
             "/auth/owner/delete/store",
             "/auth/owner/update/store",
             "/auth/owner/read/store",
@@ -54,9 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
-                .antMatchers("/store/reserve").hasAuthority("ROLE_USER")
-                .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/store/reserve", "/myreservation/**").hasAuthority("ROLE_USER")
+                .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll();
 
         http
                 .httpBasic().disable()

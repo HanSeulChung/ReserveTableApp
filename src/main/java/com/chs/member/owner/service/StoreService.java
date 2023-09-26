@@ -43,8 +43,9 @@ public interface StoreService {
     StoreDto updateStore(StoreEditInput storeInput, String ownerId);
 
     /**
-     * 가게 주인이 등록한 가게 조회(auth/admin 기능)
+     * 가게 주인이 등록한 가게 조회(auth/owner 기능)
      */
     List<StoreDto> readStore(String ownerId);
+
 
 }

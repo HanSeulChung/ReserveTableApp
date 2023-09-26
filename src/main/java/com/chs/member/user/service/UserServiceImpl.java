@@ -1,5 +1,8 @@
 package com.chs.member.user.service;
 
+import com.chs.exception.Impl.AlreadyExistUserException;
+import com.chs.exception.Impl.NoUserIdException;
+import com.chs.exception.Impl.UnmatchPasswordException;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
 import com.chs.member.user.dto.UserDto;
@@ -51,7 +54,7 @@ public class UserServiceImpl implements UserService{
     public UserDto register(Auth.SignUp member) {
         boolean exits = this.userRepository.existsByUserId(member.getUserId()) ;
         if (exits) {
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
+            throw new AlreadyExistUserException();
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
@@ -63,10 +66,10 @@ public class UserServiceImpl implements UserService{
     public UserDto authenticate(Auth.SignIn member) {
 
         var user = this.userRepository.findByUserId(member.getUserId())
-                .orElseThrow(() -> new RuntimeException("해당 아이디가 존재하지 않습니다."));
+                .orElseThrow(() -> new NoUserIdException());
 
         if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new UnmatchPasswordException();
         }
 
         return UserDto.of(user);
@@ -87,7 +90,7 @@ public class UserServiceImpl implements UserService{
 
         Optional<User> user = userRepository.findByUserId(userId);
         if (!user.isPresent()) {
-            throw new RuntimeException("존재하지 않는 회원입니다.");
+            throw new NoUserIdException();
         }
         if (user.get().getStatus().equals(MemberStatus.WITHDRAW)) {
             throw new RuntimeException("이미 탈퇴한 회원입니다.");

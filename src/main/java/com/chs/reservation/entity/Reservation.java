@@ -1,5 +1,6 @@
 package com.chs.reservation.entity;
 
+import com.chs.reservation.dto.ReservationDto;
 import com.chs.type.ArriveCode;
 import com.chs.type.ReservationCode;
 import com.chs.type.UsingCode;
@@ -22,7 +23,6 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     long storeId;
     String userId;
     String userPhone;
@@ -35,4 +35,15 @@ public class Reservation {
     LocalDateTime resDt;  // 이용할 예약 시간
     LocalDateTime arrDt;  // 매장 방문 도착 시간
 
+    public static Reservation toEntity(ReservationDto reservationDto) {
+        return Reservation.builder()
+                .storeId(reservationDto.getStoreId())
+                .userId(reservationDto.getUserId())
+                .userPhone(reservationDto.getUserPhone())
+                .regDt(reservationDto.getRegDt())
+                .resDt(reservationDto.getResDt())
+                .status(reservationDto.getStatus())
+                .usingCode(reservationDto.getUsingCode())
+                .build();
+    }
 }

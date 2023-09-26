@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ReservationListViewController {
     private final ReservationService reservationService;
-    @GetMapping("/all")
-    public ResponseEntity<?> viewAllStore(final Pageable pageable) {
-        Page<Reservation> reservations = this.reservationService.getAllReservations(pageable);
-        return ResponseEntity.ok(reservations);
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<?> viewAllStore(final Pageable pageable) {
+//        Page<Reservation> reservations = this.reservationService.getAllReservations(pageable);
+//        return ResponseEntity.ok(reservations);
+//    }
 
 
 }

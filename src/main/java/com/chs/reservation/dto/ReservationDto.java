@@ -65,6 +65,7 @@ public class ReservationDto {
                 .storeId(reservationInput.getStoreId())
                 .userId(reservationInput.getUserId())
                 .userPhone(reservationInput.getUserPhone())
+                .usingCode(UsingCode.RESERVATION)
                 .status(ReservationCode.WAITING)
                 .regDt(LocalDateTime.now())
                 .resDt(reservationInput.getResDt())
