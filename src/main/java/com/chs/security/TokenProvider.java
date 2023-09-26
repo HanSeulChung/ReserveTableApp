@@ -1,6 +1,6 @@
 package com.chs.security;
 
-import com.chs.member.service.UserService;
+import com.chs.member.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

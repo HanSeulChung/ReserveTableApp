@@ -1,7 +1,7 @@
 package com.chs.member.model;
 
-import com.chs.admin.entity.Owner;
-import com.chs.member.entity.User;
+import com.chs.member.owner.entity.Owner;
+import com.chs.member.user.entity.User;
 import com.chs.type.MemberStatus;
 import lombok.Data;
 

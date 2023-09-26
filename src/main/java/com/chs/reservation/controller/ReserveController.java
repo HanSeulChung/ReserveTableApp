@@ -1,13 +1,10 @@
 package com.chs.reservation.controller;
 
 
-import com.chs.admin.entity.Store;
 import com.chs.reservation.dto.ReservationInput;
 import com.chs.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
