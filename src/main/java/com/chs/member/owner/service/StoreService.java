@@ -33,6 +33,16 @@ public interface StoreService {
     List<StoreDto> getStoreByStoreAddr(String storeAddr);
 
     /**
+     * 가게 점장의 아이디로 가게 조회
+     */
+    List<StoreDto> getStoreByOwnerId(String ownerId);
+
+    /**
+     * 가게 점장의 아이디와 가게 Id로 가게 1개 조회
+     */
+    StoreDto getStoreByOwnerIdAndStoreId(String ownerId, Long storeId);
+
+    /**
      * 가게 삭제
      */
     void deleteStore(Long storeId, String storeName, String ownerId);

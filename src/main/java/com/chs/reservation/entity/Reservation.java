@@ -1,15 +1,14 @@
 package com.chs.reservation.entity;
 
+import com.chs.member.owner.entity.Store;
+import com.chs.member.user.entity.User;
 import com.chs.reservation.dto.ReservationDto;
 import com.chs.type.ArriveCode;
 import com.chs.type.ReservationCode;
 import com.chs.type.UsingCode;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
@@ -23,9 +22,6 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    long storeId;
-    String userId;
-    String userPhone;
 
     ReservationCode status; //상태(예약 대기, 예약 승인, 예약 거절)
     UsingCode usingCode;
@@ -35,11 +31,16 @@ public class Reservation {
     LocalDateTime resDt;  // 이용할 예약 시간
     LocalDateTime arrDt;  // 매장 방문 도착 시간
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="store_id")
+    private Store store;
+
     public static Reservation toEntity(ReservationDto reservationDto) {
         return Reservation.builder()
-                .storeId(reservationDto.getStoreId())
-                .userId(reservationDto.getUserId())
-                .userPhone(reservationDto.getUserPhone())
                 .regDt(reservationDto.getRegDt())
                 .resDt(reservationDto.getResDt())
                 .status(reservationDto.getStatus())

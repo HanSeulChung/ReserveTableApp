@@ -19,6 +19,7 @@ import java.util.List;
 @Data
 public class ReservationDto {
 
+    private long reservationId;
     private long storeId;
     private String userId;
     private String userPhone;
@@ -48,9 +49,7 @@ public class ReservationDto {
     public static ReservationDto of(Reservation reservation) {
 
         return ReservationDto.builder()
-                .storeId(reservation.getStoreId())
-                .userId(reservation.getUserId())
-                .userPhone(reservation.getUserPhone())
+                .reservationId(reservation.getId())
                 .status(reservation.getStatus())
                 .usingCode(reservation.getUsingCode())
                 .arriveCode(reservation.getArriveCode())

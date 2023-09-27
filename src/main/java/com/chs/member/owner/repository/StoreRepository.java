@@ -11,7 +11,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     boolean existsById(Long storeId);
     List<Store> findAllByStoreName(String storeName);
     List<Store> findAllByAddr(String storeAddr);
-    List<Store> findAllByOwnerId(String ownerId);
+    List<Store> findAllByOwner_UserId(String ownerUserId);
+
+    List<Store> findAllById(Long storeId);
     @Transactional
     void deleteAllByIdAndStoreName(Long storeId, String storeName);
 }

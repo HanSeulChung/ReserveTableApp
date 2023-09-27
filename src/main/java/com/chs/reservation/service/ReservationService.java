@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ReservationService {
 
@@ -15,11 +16,27 @@ public interface ReservationService {
      */
     ReservationDto reserve(ReservationInput parameter);
 
+    /**
+     * 전체 예약 조회 By 점주 마이페이지
+     */
+    Map<Long, List<ReservationDto>> getReservationByOwnerId(String ownerId);
 
     /**
      * 가게 별로 예약 조회 By 점주 마이페이지
      */
+    List<ReservationDto> getReservationByOwnerIdAndStoreId(String ownerId, Long storeId);
+
     List<ReservationDto> getReservationByStoreId(Long storeId);
+
+    /**
+     * 손님 예약 허용
+     */
+    ReservationDto approvalReservation(Long reservationId);
+
+    /**
+     * 손님 예약 거절
+     */
+    ReservationDto refuseReservation(Long reservationId);
 
     /**
      * 전체 예약 조회 By 사용자 마이페이지
@@ -29,7 +46,7 @@ public interface ReservationService {
     /**
      * 가게 앞 키오스크
      */
-    ReservationDto getReservationByUserIdOnKiosk(String userId, Long storeId);
+    List<ReservationDto> getReservationByUserIdOnKiosk(String userId, Long storeId);
 
     /**
      * 승인 예약만 조회
@@ -43,5 +60,5 @@ public interface ReservationService {
     /**
      * 도착 후 키오스크 조작
      */
-    ReservationDto arriveOnStore(String userId, Long storeId);
+    ReservationDto arriveOnStore(Long reservationId);
 }

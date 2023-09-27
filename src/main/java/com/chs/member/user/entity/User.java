@@ -1,13 +1,16 @@
 package com.chs.member.user.entity;
 
 import com.chs.member.user.dto.UserDto;
+import com.chs.reservation.entity.Reservation;
 import com.chs.type.MemberStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +37,9 @@ public class User implements UserDetails {
     private LocalDateTime lastLoginDt;
 
     private int penalty;
+
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
 
     public static User toEntity(UserDto userDto) {
         return User.builder()

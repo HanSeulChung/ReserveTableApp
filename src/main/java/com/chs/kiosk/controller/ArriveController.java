@@ -22,12 +22,10 @@ public class ArriveController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("arrive/{userId}")
+    @PostMapping("/arrive")
     public ResponseEntity<?> arriveOnKiosk(
-            @RequestParam Long storeId,
-            @PathVariable String userId) {
-        var result = this.reservationService.arriveOnStore(userId, storeId);
-
+            @RequestParam Long reservationId) {
+        var result = this.reservationService.arriveOnStore(reservationId);
         return ResponseEntity.ok(result);
     }
 }

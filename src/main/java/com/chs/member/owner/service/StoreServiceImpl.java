@@ -11,12 +11,10 @@ import com.chs.member.owner.dto.StoreEditInput;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -37,7 +35,7 @@ public class StoreServiceImpl implements StoreService{
 
     @Override
     public List<StoreDto> readStore(String ownerId) {
-        return StoreDto.of(storeRepository.findAllByOwnerId(ownerId));
+        return StoreDto.of(storeRepository.findAllByOwner_UserId(ownerId));
     }
 
     @Override
@@ -53,6 +51,16 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public List<StoreDto> getStoreByStoreAddr(String storeAddr) {
         return StoreDto.of(storeRepository.findAllByAddr(storeAddr));
+    }
+
+    @Override
+    public List<StoreDto> getStoreByOwnerId(String ownerId) {
+        return StoreDto.of(storeRepository.findAllByOwner_UserId(ownerId));
+    }
+
+    @Override
+    public StoreDto getStoreByOwnerIdAndStoreId(String ownerId, Long storeId) {
+        return null;
     }
 
     @Override
