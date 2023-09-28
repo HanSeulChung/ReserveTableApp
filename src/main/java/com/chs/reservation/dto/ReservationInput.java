@@ -19,7 +19,6 @@ public class ReservationInput {
 
     private long storeId;
     private String storeName;
-    private String userId;
-    private String userPhone;
     private LocalDateTime resDt;  // 이용할 예약 시간
+    private int people;
 }

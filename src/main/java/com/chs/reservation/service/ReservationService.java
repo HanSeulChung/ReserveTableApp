@@ -14,7 +14,12 @@ public interface ReservationService {
     /**
      * 예약 등록
      */
-    ReservationDto reserve(ReservationInput parameter);
+    ReservationDto reserve(ReservationInput parameter, String userId);
+
+    /**
+     * 예약 삭제
+     */
+    void delete(Long reservationId, String userId);
 
     /**
      * 전체 예약 조회 By 점주 마이페이지

@@ -1,6 +1,7 @@
 package com.chs.member.user.controller;
 
 
+import com.chs.member.owner.dto.StoreDto;
 import com.chs.member.owner.entity.Store;
 import com.chs.member.owner.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class StoreListViewController {
     private final StoreService storeService;
     @GetMapping("/all")
     public ResponseEntity<?> viewAllStore(final Pageable pageable) {
-        Page<Store> stores = this.storeService.getAllStore(pageable);
+        Page<StoreDto> stores = this.storeService.getAllStore(pageable);
         return ResponseEntity.ok(stores);
     }
 

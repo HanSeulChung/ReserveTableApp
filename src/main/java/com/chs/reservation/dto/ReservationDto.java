@@ -23,6 +23,7 @@ public class ReservationDto {
     private long storeId;
     private String userId;
     private String userPhone;
+    private int people;
 
     private ReservationCode status; //상태(예약 대기, 예약 승인, 예약 거절)
     private UsingCode usingCode;
@@ -50,24 +51,27 @@ public class ReservationDto {
 
         return ReservationDto.builder()
                 .reservationId(reservation.getId())
+                .userId(reservation.getUser().getUserId())
+                .userPhone(reservation.getUser().getPhone())
+                .storeId(reservation.getStore().getId())
                 .status(reservation.getStatus())
                 .usingCode(reservation.getUsingCode())
                 .arriveCode(reservation.getArriveCode())
                 .regDt(reservation.getRegDt())
                 .resDt(reservation.getResDt())
                 .arrDt(reservation.getArrDt())
+                .people(reservation.getPeople())
                 .build();
     }
 
     public static ReservationDto fromInput(ReservationInput reservationInput) {
         return ReservationDto.builder()
                 .storeId(reservationInput.getStoreId())
-                .userId(reservationInput.getUserId())
-                .userPhone(reservationInput.getUserPhone())
                 .usingCode(UsingCode.RESERVATION)
                 .status(ReservationCode.WAITING)
                 .regDt(LocalDateTime.now())
                 .resDt(reservationInput.getResDt())
+                .people(reservationInput.getPeople())
                 .build();
     }
 }

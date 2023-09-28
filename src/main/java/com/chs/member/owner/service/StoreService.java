@@ -19,7 +19,7 @@ public interface StoreService {
     /**
      * 전체 가게 조회
      */
-    Page<Store> getAllStore(Pageable pageable);
+    Page<StoreDto> getAllStore(Pageable pageable);
 
     /**
      * 가게 이름으로 가게 조회

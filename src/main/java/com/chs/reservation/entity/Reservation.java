@@ -31,6 +31,8 @@ public class Reservation {
     LocalDateTime resDt;  // 이용할 예약 시간
     LocalDateTime arrDt;  // 매장 방문 도착 시간
 
+    int people;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_user_id")
     private User user;
@@ -39,12 +41,21 @@ public class Reservation {
     @JoinColumn(name="store_id")
     private Store store;
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
     public static Reservation toEntity(ReservationDto reservationDto) {
         return Reservation.builder()
                 .regDt(reservationDto.getRegDt())
                 .resDt(reservationDto.getResDt())
                 .status(reservationDto.getStatus())
                 .usingCode(reservationDto.getUsingCode())
+                .people(reservationDto.getPeople())
                 .build();
     }
 }

@@ -1,11 +1,14 @@
 package com.chs.member.owner.service;
 
 import com.chs.exception.Impl.NoStoreException;
+import com.chs.exception.Impl.NoUserIdException;
 import com.chs.exception.Impl.UnmatchOwnerStoreException;
 import com.chs.exception.Impl.UnmatchStoreIdAndNameException;
 import com.chs.member.owner.dto.StoreDto;
 import com.chs.member.owner.dto.StoreInput;
+import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.entity.Store;
+import com.chs.member.owner.repository.OwnerRepository;
 import com.chs.member.owner.repository.StoreRepository;
 import com.chs.member.owner.dto.StoreEditInput;
 import lombok.AllArgsConstructor;
@@ -20,15 +23,22 @@ import java.util.List;
 @Service
 public class StoreServiceImpl implements StoreService{
     private final StoreRepository storeRepository;
+    private final OwnerRepository ownerRepository;
 
     @Override
     public StoreDto registerStore(StoreInput parameter, String ownerId) {
-        boolean exist = storeRepository.existsByStoreNameAndAddrDetail(parameter.getStoreName(), parameter.getAddrDetail());
-        if (exist) {
+        boolean storeExist = storeRepository.existsByStoreNameAndAddrDetail(parameter.getStoreName(), parameter.getAddrDetail());
+        if (storeExist) {
             throw new RuntimeException("이미 있는 가게 입니다.");
         }
 
-        Store storeEntity = Store.toEntity(StoreDto.fromInput(parameter, ownerId));
+        Owner owner = ownerRepository.findByUserId(ownerId)
+                .orElseThrow(() -> new NoUserIdException());
+
+
+
+        Store storeEntity = Store.toEntity(StoreDto.fromInput(parameter));
+        storeEntity.setOwner(owner);
         storeRepository.save(storeEntity);
         return StoreDto.of(storeEntity);
     }
@@ -39,8 +49,8 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
-    public Page<Store> getAllStore(Pageable pageable) {
-        return this.storeRepository.findAll(pageable);
+    public Page<StoreDto> getAllStore(Pageable pageable) {
+        return StoreDto.toDto(this.storeRepository.findAll(pageable));
     }
 
     @Override
@@ -68,7 +78,7 @@ public class StoreServiceImpl implements StoreService{
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NoStoreException());
 
-        if (!store.getOwnerId().equals(ownerId)) {
+        if (!store.getOwner().getUserId().equals(ownerId)) {
             throw new UnmatchOwnerStoreException();
         }
         if (!store.getStoreName().equals(storeName)) {
@@ -82,9 +92,11 @@ public class StoreServiceImpl implements StoreService{
         Store store = storeRepository.findById(parameter.getStoreId())
                 .orElseThrow(() -> new NoStoreException());
 
-        if (!store.getOwnerId().equals(ownerId)) {
+        if (!store.getOwner().getUserId().equals(ownerId)) {
             throw new UnmatchOwnerStoreException();
         }
+        Owner owner = ownerRepository.findByUserId(ownerId)
+                        .orElseThrow(() -> new NoUserIdException());
 
         return StoreDto.of(storeRepository.save(
                 Store.builder()
@@ -96,7 +108,7 @@ public class StoreServiceImpl implements StoreService{
                         .phone(parameter.getPhone())
                         .regDt(store.getRegDt())
                         .udtDt(LocalDateTime.now())
-                        .ownerId(store.getOwnerId())
+                        .owner(owner)
                         .build()
         ));
     }

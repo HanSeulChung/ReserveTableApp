@@ -3,7 +3,11 @@ package com.chs.reservation.service;
 
 import com.chs.exception.Impl.*;
 import com.chs.member.owner.dto.StoreDto;
+import com.chs.member.owner.entity.Store;
+import com.chs.member.owner.repository.StoreRepository;
 import com.chs.member.owner.service.StoreService;
+import com.chs.member.user.entity.User;
+import com.chs.member.user.repository.UserRepository;
 import com.chs.reservation.dto.ReservationDto;
 import com.chs.reservation.dto.ReservationInput;
 import com.chs.reservation.entity.Reservation;
@@ -26,16 +30,54 @@ import java.util.Map;
 @Service
 public class ReservationServiceImpl implements ReservationService{
     private final ReservationRepository reservationRepository;
+    private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
     private final StoreService storeService;
 
     @Override
-    public ReservationDto reserve(ReservationInput parameter) {
-        ReservationDto reservationDto = ReservationDto.fromInput(parameter);
-        reservationRepository.save(Reservation.toEntity(reservationDto));
-        return reservationDto;
+    public ReservationDto reserve(ReservationInput parameter, String userId) {
+
+        User user = userRepository.findByUserId(userId)
+                        .orElseThrow(() -> new NoUserIdException());
+        Store store = storeRepository.findById(parameter.getStoreId())
+                        .orElseThrow(() -> new NoStoreException());
+        LocalDateTime nowTime = LocalDateTime.now();
+        if (nowTime.isBefore(parameter.getResDt())) {
+            new InCorrectReservationException();
+        }
+
+        boolean myExists = reservationRepository.existsByUser_UserIdAndResDt(userId, parameter.getResDt());
+        if (myExists) {
+            new AlreadyMyReservationException();
+        }
+
+        boolean reservationExist = reservationRepository.existsByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
+        if (reservationExist) {
+            new AlreadyReservationException();
+        }
+        Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
+        reservationSave.setUser(user);
+        reservationSave.setStore(store);
+        reservationRepository.save(reservationSave);
+
+        return ReservationDto.of(reservationSave);
     }
 
-//    @Override
+    @Override
+    public void delete(Long reservationId, String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoUserIdException());
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NoReservationException());
+
+        if (!reservation.getUser().getUserId().equals(userId)) {
+            new NoReservationFromUserIdException();
+        }
+
+        reservationRepository.deleteById(reservationId);
+    }
+
+    //    @Override
 //    public Page<Reservation> getAllReservations(Pageable pageable) {
 //
 //        return this.reservationRepository.findAll(pageable);

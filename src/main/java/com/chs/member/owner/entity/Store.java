@@ -2,6 +2,7 @@ package com.chs.member.owner.entity;
 
 import com.chs.member.owner.dto.StoreDto;
 import com.chs.reservation.entity.Reservation;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,7 +19,6 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String ownerId;
     private String storeName ;
     private String phone;
     private String addr;
@@ -28,16 +28,19 @@ public class Store {
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"stores"})
+    @ManyToOne
     @JoinColumn(name="owner_user_id")
     private Owner owner;
 
     @OneToMany(mappedBy = "store" , cascade = CascadeType.REMOVE)
     private List<Reservation> reservations;
 
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
     public static Store toEntity(StoreDto storeDto) {
         return Store.builder()
-                .ownerId(storeDto.getOwnerId())
                 .storeName(storeDto.getStoreName())
                 .phone(storeDto.getPhone())
                 .addr(storeDto.getAddr())
