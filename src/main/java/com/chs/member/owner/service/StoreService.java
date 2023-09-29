@@ -29,7 +29,6 @@ public interface StoreService {
     /**
      * 가게 주소(상세 주소 X)로 가게 조회
      */
-
     List<StoreDto> getStoreByStoreAddr(String storeAddr);
 
     /**

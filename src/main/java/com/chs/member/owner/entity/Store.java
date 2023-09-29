@@ -2,6 +2,7 @@ package com.chs.member.owner.entity;
 
 import com.chs.member.owner.dto.StoreDto;
 import com.chs.reservation.entity.Reservation;
+import com.chs.review.entity.Review;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -35,6 +36,9 @@ public class Store {
 
     @OneToMany(mappedBy = "store" , cascade = CascadeType.REMOVE)
     private List<Reservation> reservations;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 
     public void setOwner(Owner owner) {
         this.owner = owner;

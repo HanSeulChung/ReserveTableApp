@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/auth/owner/delete/store",
             "/auth/owner/update/store",
             "/auth/owner/read/store",
-            "/auth/owner/reservation/all"
+            "/auth/owner/reservation/**"
     };
 
     @Override

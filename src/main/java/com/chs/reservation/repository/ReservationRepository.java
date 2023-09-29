@@ -13,7 +13,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByUser_UserId(String userUserId);
     List<Reservation> findAllByStore_Id(Long storeId);
     List<Reservation> findAllByStore_IdAndUser_UserId(Long storeId, String userUserId);
-
     boolean existsByUser_UserIdAndResDt(String userUserId, LocalDateTime resDt);
     boolean existsByStore_IdAndResDt(Long storeId, LocalDateTime resDt);
 

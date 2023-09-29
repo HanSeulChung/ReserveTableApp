@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     boolean existsByStoreNameAndAddrDetail(String storeName, String addrDetail);
@@ -12,6 +13,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByStoreName(String storeName);
     List<Store> findAllByAddr(String storeAddr);
     List<Store> findAllByOwner_UserId(String ownerUserId);
+
+
+    Optional<Store> findByOwner_UserId(String ownerUserId);
 
     List<Store> findAllById(Long storeId);
     @Transactional

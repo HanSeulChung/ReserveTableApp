@@ -28,6 +28,7 @@ public class Reservation {
     ArriveCode arriveCode;
 
     LocalDateTime regDt;  // 예약을 신청한 시간
+    LocalDateTime udtDt;
     LocalDateTime resDt;  // 이용할 예약 시간
     LocalDateTime arrDt;  // 매장 방문 도착 시간
 

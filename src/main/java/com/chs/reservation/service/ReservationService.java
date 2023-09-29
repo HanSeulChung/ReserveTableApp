@@ -22,6 +22,11 @@ public interface ReservationService {
     void delete(Long reservationId, String userId);
 
     /**
+     * 예약 수정 (단, 가게 주인이 예약 승인 및 거절을 아직 하지않고 WATING일 경우)
+     */
+    ReservationDto update(ReservationInput parameter, Long reservationId, String userId);
+
+    /**
      * 전체 예약 조회 By 점주 마이페이지
      */
     Map<Long, List<ReservationDto>> getReservationByOwnerId(String ownerId);

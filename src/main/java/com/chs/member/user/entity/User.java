@@ -2,6 +2,7 @@ package com.chs.member.user.entity;
 
 import com.chs.member.user.dto.UserDto;
 import com.chs.reservation.entity.Reservation;
+import com.chs.review.entity.Review;
 import com.chs.type.MemberStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews;
 
     public static User toEntity(UserDto userDto) {
         return User.builder()

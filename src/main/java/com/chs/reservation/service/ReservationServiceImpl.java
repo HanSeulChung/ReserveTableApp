@@ -18,9 +18,7 @@ import com.chs.type.UsingCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,26 +39,41 @@ public class ReservationServiceImpl implements ReservationService{
                         .orElseThrow(() -> new NoUserIdException());
         Store store = storeRepository.findById(parameter.getStoreId())
                         .orElseThrow(() -> new NoStoreException());
-        LocalDateTime nowTime = LocalDateTime.now();
-        if (nowTime.isBefore(parameter.getResDt())) {
-            new InCorrectReservationException();
-        }
 
-        boolean myExists = reservationRepository.existsByUser_UserIdAndResDt(userId, parameter.getResDt());
-        if (myExists) {
-            new AlreadyMyReservationException();
-        }
-
-        boolean reservationExist = reservationRepository.existsByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
-        if (reservationExist) {
-            new AlreadyReservationException();
-        }
+        validateReserve(parameter, userId);
         Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
         reservationSave.setUser(user);
         reservationSave.setStore(store);
         reservationRepository.save(reservationSave);
 
         return ReservationDto.of(reservationSave);
+    }
+
+    private void validateReserve(ReservationInput parameter, String userId) {
+        ZoneId utcZone = ZoneId.of("UTC");
+        ZonedDateTime resDtInUTC = parameter.getResDt().atZone(utcZone);
+        LocalDateTime nowTime = LocalDateTime.now(utcZone);
+        if (nowTime.isAfter(resDtInUTC.toLocalDateTime())) {
+            throw new InCorrectReservationException();
+        }
+
+        boolean myExists = reservationRepository.existsByUser_UserIdAndResDt(userId, parameter.getResDt());
+        if (myExists) {
+            throw new AlreadyMyReservationException();
+        }
+
+        boolean reservationExist = reservationRepository.existsByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
+        if (reservationExist) {
+            throw new AlreadyReservationException();
+        }
+
+        List<Reservation> allByUserUserId = reservationRepository.findAllByUser_UserId(userId);
+        for(Reservation x : allByUserUserId) {
+            if (x.getResDt().toLocalDate().equals(parameter.getResDt().toLocalDate())){
+                throw new OneReservationPerDayException();
+            }
+        }
+
     }
 
     @Override
@@ -75,6 +88,40 @@ public class ReservationServiceImpl implements ReservationService{
         }
 
         reservationRepository.deleteById(reservationId);
+    }
+
+    @Override
+    public ReservationDto update(ReservationInput parameter, Long reservationId, String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoUserIdException());
+        Store store = storeRepository.findById(parameter.getStoreId())
+                .orElseThrow(() -> new NoStoreException());
+
+        Reservation reservationForEdit = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NoReservationException());
+
+        if (!store.getId().equals(reservationForEdit.getStore().getId())) {
+            throw new NoReservationException();
+        }
+        validateReserve(parameter, userId);
+
+        if (reservationForEdit.getStatus() != ReservationCode.WAITING) {
+            throw new EditReservationException();
+        }
+
+
+        return ReservationDto.of(reservationRepository.save(
+                Reservation.builder()
+                        .id(reservationForEdit.getId())
+                        .status(reservationForEdit.getStatus())
+                        .usingCode(reservationForEdit.getUsingCode())
+                        .resDt(parameter.getResDt())
+                        .people(parameter.getPeople())
+                        .user(reservationForEdit.getUser())
+                        .udtDt(LocalDateTime.now())
+                        .store(reservationForEdit.getStore())
+                        .build()
+        ));
     }
 
     //    @Override
@@ -98,14 +145,27 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     public List<ReservationDto> getReservationByOwnerIdAndStoreId(String ownerId, Long storeId) {
-        storeService.getStoreByOwnerId(ownerId);
+
+        storeRepository.findByIdAndOwner_UserId(storeId, ownerId)
+                .orElseThrow(() -> new NoStoreException());
+
+        List<Store> stores = storeRepository.findAllByOwner_UserId(ownerId);
+
+        if (stores.size() == 0) {
+            throw new NoReservationException();
+        }
+
         var result = reservationRepository.findAllByStore_Id(storeId);
+
         return ReservationDto.of(result);
     }
 
     @Override
     public List<ReservationDto> getReservationByStoreId(Long storeId) {
         var result = reservationRepository.findAllByStore_Id(storeId);
+        if (result == null) {
+            throw new NoStoreException();
+        }
         return ReservationDto.of(result);
     }
 
