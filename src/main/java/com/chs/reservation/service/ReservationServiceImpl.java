@@ -19,10 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -41,6 +38,7 @@ public class ReservationServiceImpl implements ReservationService{
                         .orElseThrow(() -> new NoStoreException());
 
         validateReserve(parameter, userId);
+
         Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
         reservationSave.setUser(user);
         reservationSave.setStore(store);
@@ -50,10 +48,10 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     private void validateReserve(ReservationInput parameter, String userId) {
-        ZoneId utcZone = ZoneId.of("UTC");
-        ZonedDateTime resDtInUTC = parameter.getResDt().atZone(utcZone);
-        LocalDateTime nowTime = LocalDateTime.now(utcZone);
-        if (nowTime.isAfter(resDtInUTC.toLocalDateTime())) {
+
+        LocalDateTime nowTime = LocalDateTime.now();
+
+        if (nowTime.isAfter(parameter.getResDt())) {
             throw new InCorrectReservationException();
         }
 
@@ -73,7 +71,6 @@ public class ReservationServiceImpl implements ReservationService{
                 throw new OneReservationPerDayException();
             }
         }
-
     }
 
     @Override
@@ -103,12 +100,22 @@ public class ReservationServiceImpl implements ReservationService{
         if (!store.getId().equals(reservationForEdit.getStore().getId())) {
             throw new NoReservationException();
         }
-        validateReserve(parameter, userId);
+
+        LocalDateTime nowTime = LocalDateTime.now();
+
+        if (nowTime.isAfter(parameter.getResDt())) {
+            throw new InCorrectReservationException();
+        }
+
+        Optional<Reservation> reservation = reservationRepository.findByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
+
+        if (!reservation.get().getUser().getUserId().equals(userId)) {
+            throw new AlreadyReservationException();
+        }
 
         if (reservationForEdit.getStatus() != ReservationCode.WAITING) {
             throw new EditReservationException();
         }
-
 
         return ReservationDto.of(reservationRepository.save(
                 Reservation.builder()

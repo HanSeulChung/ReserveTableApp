@@ -16,6 +16,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     boolean existsByUser_UserIdAndResDt(String userUserId, LocalDateTime resDt);
     boolean existsByStore_IdAndResDt(Long storeId, LocalDateTime resDt);
 
+    Optional<Reservation> findByStore_IdAndResDt(Long storeId, LocalDateTime resDt);
+
     @Transactional
     void deleteById(Long reservationId);
 }

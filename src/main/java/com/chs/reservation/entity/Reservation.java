@@ -3,6 +3,7 @@ package com.chs.reservation.entity;
 import com.chs.member.owner.entity.Store;
 import com.chs.member.user.entity.User;
 import com.chs.reservation.dto.ReservationDto;
+import com.chs.review.entity.Review;
 import com.chs.type.ArriveCode;
 import com.chs.type.ReservationCode;
 import com.chs.type.UsingCode;
@@ -41,6 +42,9 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
     private Store store;
+
+    @OneToOne(mappedBy = "review")
+    private Review review;
 
     public void setUser(User user) {
         this.user = user;
