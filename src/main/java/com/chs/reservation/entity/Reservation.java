@@ -43,7 +43,7 @@ public class Reservation {
     @JoinColumn(name="store_id")
     private Store store;
 
-    @OneToOne(mappedBy = "review")
+    @OneToOne(mappedBy = "reservation")
     private Review review;
 
     public void setUser(User user) {

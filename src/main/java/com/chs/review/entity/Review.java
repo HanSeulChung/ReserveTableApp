@@ -27,12 +27,23 @@ public class Review {
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reservation_id")
+    @OneToOne
     private Reservation reservation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="store_id")
+    private Store store;
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public static Review toEntity(ReviewDto reviewDto) {

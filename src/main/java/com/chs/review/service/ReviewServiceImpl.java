@@ -34,8 +34,11 @@ public class ReviewServiceImpl implements ReviewService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
+
+
         Review reviewSave = Review.toEntity(ReviewDto.fromInput(parameter));
         reviewSave.setReservation(reservation);
+        reviewSave.setUser(user);
         reviewRepository.save(reviewSave);
         return ReviewDto.of(reviewSave);
     }
