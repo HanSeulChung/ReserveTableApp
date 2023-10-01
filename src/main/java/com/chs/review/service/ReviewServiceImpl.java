@@ -1,9 +1,6 @@
 package com.chs.review.service;
 
-import com.chs.exception.Impl.NoReservationException;
-import com.chs.exception.Impl.NoReviewException;
-import com.chs.exception.Impl.NoUserIdException;
-import com.chs.exception.Impl.UnmatchReservationUserException;
+import com.chs.exception.Impl.*;
 import com.chs.member.user.entity.User;
 import com.chs.member.user.repository.UserRepository;
 import com.chs.reservation.entity.Reservation;
@@ -12,6 +9,7 @@ import com.chs.review.dto.ReviewDto;
 import com.chs.review.dto.ReviewInput;
 import com.chs.review.entity.Review;
 import com.chs.review.repository.ReviewRepository;
+import com.chs.type.UsingCode;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,9 @@ public class ReviewServiceImpl implements ReviewService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
-
+        if (!reservation.getUsingCode().equals(UsingCode.COMPLETE)) {
+            throw new ReviewAfterUse();
+        }
 
         Review reviewSave = Review.toEntity(ReviewDto.fromInput(parameter));
         reviewSave.setReservation(reservation);
