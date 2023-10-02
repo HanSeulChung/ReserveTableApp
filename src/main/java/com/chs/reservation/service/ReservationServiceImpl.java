@@ -42,9 +42,9 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
         reservationSave.setUser(user);
         reservationSave.setStore(store);
-        reservationRepository.save(reservationSave);
+        Reservation reservation = reservationRepository.save(reservationSave);
 
-        return ReservationDto.of(reservationSave);
+        return ReservationDto.of(reservation);
     }
 
     private void validateReserve(ReservationInput parameter, String userId) {
@@ -101,34 +101,35 @@ public class ReservationServiceImpl implements ReservationService{
             throw new NoReservationException();
         }
 
-        LocalDateTime nowTime = LocalDateTime.now();
-
-        if (nowTime.isAfter(parameter.getResDt())) {
-            throw new InCorrectReservationException();
+        if (!user.getUserId().equals(userId)) {
+            throw new AlreadyReservationException();
         }
 
-        Optional<Reservation> reservation = reservationRepository.findByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
-
-        if (!reservation.get().getUser().getUserId().equals(userId)) {
-            throw new AlreadyReservationException();
+        LocalDateTime nowTime = LocalDateTime.now();
+        if (nowTime.isAfter(parameter.getResDt())) {
+            throw new InCorrectReservationException();
         }
 
         if (reservationForEdit.getStatus() != ReservationCode.WAITING) {
             throw new EditReservationException();
         }
 
-        return ReservationDto.of(reservationRepository.save(
-                Reservation.builder()
-                        .id(reservationForEdit.getId())
-                        .status(reservationForEdit.getStatus())
-                        .usingCode(reservationForEdit.getUsingCode())
-                        .resDt(parameter.getResDt())
-                        .people(parameter.getPeople())
-                        .user(reservationForEdit.getUser())
-                        .udtDt(LocalDateTime.now())
-                        .store(reservationForEdit.getStore())
-                        .build()
-        ));
+        Reservation buildReservation = Reservation.builder()
+                .id(reservationForEdit.getId())
+                .status(reservationForEdit.getStatus())
+                .usingCode(reservationForEdit.getUsingCode())
+                .resDt(parameter.getResDt())
+                .regDt(reservationForEdit.getRegDt())
+                .people(parameter.getPeople())
+                .user(reservationForEdit.getUser())
+                .udtDt(LocalDateTime.now())
+                .store(reservationForEdit.getStore())
+                .build();
+
+        buildReservation.setUser(reservationForEdit.getUser());
+        buildReservation.setStore(reservationForEdit.getStore());
+
+        return ReservationDto.of(reservationRepository.save(buildReservation));
     }
 
     //    @Override
@@ -181,18 +182,21 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
-        Reservation saveReservation = reservationRepository.save(
-                Reservation.builder()
-                        .id(reservation.getId())
-                        .regDt(reservation.getRegDt())
-                        .resDt(reservation.getResDt())
-                        .status(ReservationCode.APPROVE)
-                        .usingCode(reservation.getUsingCode())
-                        .arriveCode(reservation.getArriveCode())
-                        .arrDt(reservation.getArrDt())
-                        .build()
-        );
-        return ReservationDto.of(saveReservation);
+
+        Reservation buildReservation = Reservation.builder()
+                .id(reservation.getId())
+                .regDt(reservation.getRegDt())
+                .resDt(reservation.getResDt())
+                .status(ReservationCode.APPROVE)
+                .usingCode(reservation.getUsingCode())
+                .arriveCode(reservation.getArriveCode())
+                .arrDt(reservation.getArrDt())
+                .build();
+
+        buildReservation.setUser(reservation.getUser());
+        buildReservation.setStore(reservation.getStore());
+
+        return ReservationDto.of(reservationRepository.save(buildReservation));
     }
 
     @Override
@@ -200,18 +204,20 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
-        Reservation saveReservation = reservationRepository.save(
-                Reservation.builder()
-                        .id(reservation.getId())
-                        .regDt(reservation.getRegDt())
-                        .resDt(reservation.getResDt())
-                        .status(ReservationCode.REFUSE)
-                        .usingCode(reservation.getUsingCode())
-                        .arriveCode(reservation.getArriveCode())
-                        .arrDt(reservation.getArrDt())
-                        .build()
-        );
-        return ReservationDto.of(saveReservation);
+        Reservation buildReservation = Reservation.builder()
+                .id(reservation.getId())
+                .regDt(reservation.getRegDt())
+                .resDt(reservation.getResDt())
+                .status(ReservationCode.REFUSE)
+                .usingCode(reservation.getUsingCode())
+                .arriveCode(reservation.getArriveCode())
+                .arrDt(reservation.getArrDt())
+                .build();
+
+        buildReservation.setUser(reservation.getUser());
+        buildReservation.setStore(reservation.getStore());
+
+        return ReservationDto.of(reservationRepository.save(buildReservation));
     }
 
     @Override
@@ -251,7 +257,9 @@ public class ReservationServiceImpl implements ReservationService{
                 .orElseThrow(() -> new NoReservationFromUserIdException());
 
         LocalDateTime nowTime = LocalDateTime.now();
-
+        if (!result.getStatus().equals(ReservationCode.APPROVE)) {
+            throw new NotApproveReservationException();
+        }
         if (result.getResDt().toLocalDate().isAfter(nowTime.toLocalDate())) {
             throw new EarlydayThanReservationException();
         }
@@ -263,11 +271,15 @@ public class ReservationServiceImpl implements ReservationService{
         LocalTime arrivalTime = nowTime.toLocalTime();
         LocalTime reservationTime = result.getResDt().toLocalTime();
 
-        if (Duration.between(arrivalTime, reservationTime).toMinutes() < 10) {
+        if (Duration.between(arrivalTime, reservationTime).toMinutes() > 10) {
             throw new NotBefore10minuteException();
         }
 
-        Reservation reservation = result.builder()
+        if (Duration.between(arrivalTime, reservationTime).toMinutes() > 10) {
+            throw new AfterBefore10minuteException();
+        }
+
+        Reservation buildReservation = result.builder()
                 .id(result.getId())
                 .arrDt(nowTime)
                 .usingCode(UsingCode.COMPLETE)
@@ -276,7 +288,11 @@ public class ReservationServiceImpl implements ReservationService{
                 .arriveCode(ArriveCode.CORRECT_ARRIVAL)
                 .status(result.getStatus())
                 .build();
-        reservationRepository.save(reservation);
+
+        buildReservation.setUser(result.getUser());
+        buildReservation.setStore(result.getStore());
+
+        Reservation reservation = reservationRepository.save(buildReservation);
 
         return ReservationDto.of(reservation);
     }

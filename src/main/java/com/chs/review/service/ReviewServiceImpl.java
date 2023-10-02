@@ -1,6 +1,7 @@
 package com.chs.review.service;
 
 import com.chs.exception.Impl.*;
+import com.chs.member.owner.entity.Store;
 import com.chs.member.user.entity.User;
 import com.chs.member.user.repository.UserRepository;
 import com.chs.reservation.entity.Reservation;
@@ -39,6 +40,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review reviewSave = Review.toEntity(ReviewDto.fromInput(parameter));
         reviewSave.setReservation(reservation);
         reviewSave.setUser(user);
+        reviewSave.setScore(reservation.getStore());
         reviewRepository.save(reviewSave);
         return ReviewDto.of(reviewSave);
     }
@@ -53,16 +55,19 @@ public class ReviewServiceImpl implements ReviewService{
             throw new UnmatchReservationUserException();
         }
 
-        return ReviewDto.of(reviewRepository.save(
-                Review.builder()
-                        .id(review.getId())
-                        .reservation(review.getReservation())
-                        .score(parameter.getScore())
-                        .review(parameter.getReview())
-                        .regDt(review.getRegDt())
-                        .udtDt(LocalDateTime.now())
-                        .build()
-        ));
+        Review buildReview = Review.builder()
+                .id(review.getId())
+                .reservation(review.getReservation())
+                .score(parameter.getScore())
+                .review(parameter.getReview())
+                .regDt(review.getRegDt())
+                .udtDt(LocalDateTime.now())
+                .build();
+
+        buildReview.setUser(review.getUser());
+        buildReview.setReservation(review.getReservation());
+        buildReview.setScore(review.getReservation().getStore());
+        return ReviewDto.of(reviewRepository.save(buildReview));
     }
 
     @Override

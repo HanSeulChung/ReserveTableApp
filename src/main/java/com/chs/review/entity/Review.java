@@ -46,6 +46,10 @@ public class Review {
         this.user = user;
     }
 
+    public void setScore(Store store) {
+        this.store = store;
+    }
+
     public static Review toEntity(ReviewDto reviewDto) {
         return Review.builder()
                 .score(reviewDto.getScore())

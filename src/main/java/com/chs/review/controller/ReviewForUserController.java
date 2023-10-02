@@ -53,7 +53,7 @@ public class ReviewForUserController {
                                             @RequestBody ReviewInput parameter) {
 
         String userId = tokenProvider.getUserId(token.substring("Bearer ".length()));
-        var result = reviewService.registerReview(parameter, reviewId, userId);
+        var result = reviewService.updateReview(parameter, reviewId, userId);
 
         return ResponseEntity.ok(result);
     }
