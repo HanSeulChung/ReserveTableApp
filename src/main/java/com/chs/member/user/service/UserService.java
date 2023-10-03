@@ -57,7 +57,7 @@ public interface UserService  extends UserDetailsService {
     /**
      * 회원정보 수정
      */
-    User updateMember(Auth.SignIn member);
+    UserDto updateMember(String userId, Auth.SignEdit member);
 
     /**
      * 회원 정보 페이지내 비밀번호 변경 기능

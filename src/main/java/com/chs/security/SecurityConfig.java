@@ -1,5 +1,11 @@
 package com.chs.security;
 
+import com.chs.config.OwnerAuthenticationFailureHandler;
+import com.chs.config.OwnerAuthenticationSuccessHandler;
+import com.chs.config.UserAuthenticationFailureHandler;
+import com.chs.config.UserAuthenticationSuccessHandler;
+import com.chs.member.owner.service.OwnerService;
+import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +26,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
+
+    private final UserService userService;
+    private final OwnerService ownerService;
+
+    @Bean
+    UserAuthenticationFailureHandler getUserFailureHandler() {
+
+        return new UserAuthenticationFailureHandler();
+    }
+    @Bean
+    UserAuthenticationSuccessHandler getUserSuccessHandler() {
+
+        return new UserAuthenticationSuccessHandler(userService);
+    }
+
+    @Bean
+    OwnerAuthenticationFailureHandler getOwnerFailureHandler() {
+
+        return new OwnerAuthenticationFailureHandler();
+    }
+    @Bean
+    OwnerAuthenticationSuccessHandler getOwnerSuccessHandler() {
+
+        return new OwnerAuthenticationSuccessHandler(ownerService);
+    }
+
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -34,6 +66,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/auth/owner/update/store",
             "/auth/owner/read/store",
             "/auth/owner/reservation/**"
+    };
+
+    private static final String[] AUTH_USERLIST = {
+            "/store/reserve",
+            "/myreservation/**"
     };
 
     @Override
@@ -52,7 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
-                .antMatchers("/store/reserve", "/myreservation/**").hasAuthority("ROLE_USER")
+                .antMatchers(AUTH_USERLIST).hasAuthority("ROLE_USER")
                 .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll();
 
         http

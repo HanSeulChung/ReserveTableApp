@@ -26,9 +26,10 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     private String userId;
-    private String userName;
-    private String phone;
     private String password;
+    private String userName;
+    private String email;
+    private String phone;
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
 
@@ -53,7 +54,7 @@ public class User implements UserDetails {
                 .password(userDto.getPassword())
                 .penalty(userDto.getPenalty())
                 .regDt(userDto.getRegDt())
-                .udtDt(LocalDateTime.now())
+                .udtDt(userDto.getUdtDt())
                 .adminYn(userDto.isAdminYn())
                 .status(userDto.getStatus())
                 .lastLoginDt(userDto.getLastLoginDt())

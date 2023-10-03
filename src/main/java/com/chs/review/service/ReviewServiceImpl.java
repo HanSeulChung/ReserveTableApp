@@ -71,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void deleteReview(Long reviewId, String userId) {
+    public void deleteReviewByUser(Long reviewId, String userId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NoReviewException());
 
@@ -102,5 +102,17 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public List<ReviewDto> viewByStore(Long storeId) {
         return null;
+    }
+
+    @Override
+    public void deleteReviewByOwner(Long reviewId, String ownerId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoReviewException());
+
+        if (!review.getReservation().getStore().getOwner().getUserId().equals(ownerId)) {
+            throw new UnmatchStoreOwnerException();
+        }
+
+        reviewRepository.deleteById(reviewId);
     }
 }

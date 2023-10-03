@@ -1,12 +1,9 @@
 package com.chs.member.owner.service;
 
+import com.chs.exception.Impl.*;
 import com.chs.member.owner.dto.OwnerDto;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
-import com.chs.exception.Impl.AlreadyExistUserException;
-import com.chs.exception.Impl.NoUserIdException;
-import com.chs.exception.Impl.UnmatchPasswordException;
-import com.chs.exception.Impl.UserNotFoundException;
 import com.chs.member.user.dto.MemberInput;
 import com.chs.member.user.entity.User;
 import com.chs.member.model.Auth;
@@ -54,7 +51,10 @@ public class OwnerServiceImpl implements OwnerService{
         if (exits) {
             throw new AlreadyExistUserException();
         }
-
+        Optional<Owner> owner = ownerRepository.findByEmail(member.getEmail());
+        if (owner.isPresent()) {
+            throw new AlreadyExistEmailException();
+        }
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
         var result = this.ownerRepository.save(member.toOwnerEntity());
         return OwnerDto.of(result);
@@ -109,7 +109,17 @@ public class OwnerServiceImpl implements OwnerService{
 
     @Override
     public void updateLastLoginDt(String userId, LocalDateTime lastLoginDt) {
+        Optional<Owner> owner = ownerRepository.findByUserId(userId);
 
+        if(!owner.isPresent()) {
+            throw new NoUserIdException();
+        }
+
+        Owner presentOwner = owner.get();
+        OwnerDto ofDto = OwnerDto.of(presentOwner);
+        ofDto.setLastLoginDt(lastLoginDt);
+
+        ownerRepository.save(Owner.toEntity(ofDto));
     }
 
 }

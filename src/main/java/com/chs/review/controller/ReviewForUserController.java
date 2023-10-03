@@ -42,7 +42,7 @@ public class ReviewForUserController {
     public ResponseEntity<?> deleteMyReview(@RequestParam Long reviewId,
                                             @RequestHeader("Authorization") String token) {
         String userId = tokenProvider.getUserId(token.substring("Bearer ".length()));
-        reviewService.deleteReview(reviewId, userId);
+        reviewService.deleteReviewByUser(reviewId, userId);
 
         return ResponseEntity.ok("해당 리뷰가 삭제되었습니다.");
     }

@@ -1,8 +1,7 @@
 package com.chs.member.user.service;
 
-import com.chs.exception.Impl.AlreadyExistUserException;
-import com.chs.exception.Impl.NoUserIdException;
-import com.chs.exception.Impl.UnmatchPasswordException;
+import com.chs.exception.Impl.*;
+import com.chs.member.owner.dto.OwnerDto;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
 import com.chs.member.user.dto.UserDto;
@@ -57,6 +56,11 @@ public class UserServiceImpl implements UserService{
             throw new AlreadyExistUserException();
         }
 
+        Optional<User> user = userRepository.findByEmail(member.getEmail());
+        if(user.isPresent()){
+            throw new AlreadyExistEmailException();
+        }
+
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
         var result = this.userRepository.save(member.toUserEntity());
         return UserDto.of(result);
@@ -97,6 +101,7 @@ public class UserServiceImpl implements UserService{
         }
 
         UserDto userDto = UserDto.of(user.get());
+        userDto.setUdtDt(LocalDateTime.now());
         userDto.setStatus(userStatus);
         userRepository.save(User.toEntity(userDto));
 
@@ -109,7 +114,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User updateMember(Auth.SignIn member) {
+    public UserDto updateMember(String userId, Auth.SignEdit member) {
         return null;
     }
 
@@ -120,11 +125,37 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto withdraw(String userId, String password) {
-        return null;
+
+        Optional<User> user = userRepository.findByUserId(userId);
+
+        if (!user.isPresent()) {
+            throw new NoUserIdException();
+        }
+
+        User presentUser = user.get();
+        if (!presentUser.getStatus().equals(MemberStatus.ING)) {
+            throw new NotUsingMemberException();
+        }
+
+        UserDto userDto = UserDto.of(presentUser);
+        userDto.setUdtDt(LocalDateTime.now());
+        userDto.setStatus(MemberStatus.WITHDRAW);
+
+        return UserDto.of(userRepository.save(User.toEntity(userDto)));
     }
 
     @Override
     public void updateLastLoginDt(String userId, LocalDateTime lastLoginDt) {
+        Optional<User> user = userRepository.findByUserId(userId);
 
+        if(!user.isPresent()) {
+            throw new NoUserIdException();
+        }
+
+        User presentUser = user.get();
+        UserDto ofDto = UserDto.of(presentUser);
+        ofDto.setLastLoginDt(lastLoginDt);
+
+        userRepository.save(User.toEntity(ofDto));
     }
 }

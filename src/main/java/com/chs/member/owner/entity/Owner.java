@@ -1,5 +1,8 @@
 package com.chs.member.owner.entity;
 
+import com.chs.member.owner.dto.OwnerDto;
+import com.chs.member.user.dto.UserDto;
+import com.chs.member.user.entity.User;
 import com.chs.type.MemberStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +29,7 @@ public class Owner implements UserDetails {
     private String userId;
     private String userName;
     private String phone;
+    private String email;
     private String password;
     private LocalDateTime regDt;
     private LocalDateTime udtDt;
@@ -37,6 +41,20 @@ public class Owner implements UserDetails {
 
     @OneToMany(mappedBy = "owner")
     private List<Store> stores;
+
+    public static Owner toEntity(OwnerDto ownerDto) {
+        return Owner.builder()
+                .userId(ownerDto.getUserId())
+                .userName(ownerDto.getUserName())
+                .phone(ownerDto.getPhone())
+                .password(ownerDto.getPassword())
+                .regDt(ownerDto.getRegDt())
+                .udtDt(ownerDto.getUdtDt())
+                .adminYn(ownerDto.isAdminYn())
+                .status(ownerDto.getStatus())
+                .lastLoginDt(ownerDto.getLastLoginDt())
+                .build();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

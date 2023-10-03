@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * 점주 회원(Owner) 로그인 및 회원가입
  */
@@ -25,7 +27,7 @@ public class AuthOwnerController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody Auth.SignUp request) {
+    public ResponseEntity<?> signup(@RequestBody @Valid Auth.SignUp request) {
         // 회원 가입 API
         var result = this.ownerService.register(request);
         log.info(String.valueOf(result));
