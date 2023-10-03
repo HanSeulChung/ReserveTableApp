@@ -51,8 +51,9 @@ public class OwnerServiceImpl implements OwnerService{
         if (exits) {
             throw new AlreadyExistUserException();
         }
+        Optional<User> user = userRepository.findByEmail(member.getEmail());
         Optional<Owner> owner = ownerRepository.findByEmail(member.getEmail());
-        if (owner.isPresent()) {
+        if (owner.isPresent() || user.isPresent()) {
             throw new AlreadyExistEmailException();
         }
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));

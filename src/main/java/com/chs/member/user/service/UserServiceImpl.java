@@ -57,7 +57,8 @@ public class UserServiceImpl implements UserService{
         }
 
         Optional<User> user = userRepository.findByEmail(member.getEmail());
-        if(user.isPresent()){
+        Optional<Owner> owner = ownerRepository.findByEmail(member.getEmail());
+        if (owner.isPresent() || user.isPresent()) {
             throw new AlreadyExistEmailException();
         }
 

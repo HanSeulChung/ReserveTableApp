@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody @Valid Auth.SignIn request) {
+    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
         // 로그인 API
         var user = this.userService.authenticate(request);
         var token = this.tokenProvider.generateUserToken(user.getUserId());
