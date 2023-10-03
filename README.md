@@ -10,10 +10,8 @@
 <li> JDK : Oracle Open JDK 20.0.1 </li>
 <li> MariaDB </li>
 <li> Spring Data JPA </li>
-<li> Redis </li>
 <li> Junit5 </li>
 <li> jsonwebtoken 0.9.1 </li>
-<li> apache.commons 4.3 </li>
 <li> Lombok </li>
 <li> Swagger 3.0.0 </li>
 
@@ -32,56 +30,91 @@
 ## API 문서
 이 프로젝트는 다음과 같은 API 엔드포인트를 제공합니다.
 ### 공통 인증
+* 회원가입
+  + 가입시 아이디와 이메일은 같은 경우 가입이 불가능 함
+* 로그인
+* 회원정보 수정(핸드폰 번호) > TODO
+* 비밀번호 수정 > TODO
+
 #### 점주 회원가입
 POST /auth/owner/signup
-<li>요청 예시</li>
+* 요청 예시
 ```json
 {
-"userId": "owner1",
-"userName": "가게주인1",
-"phone": "010-0101-1111",
-"email": "이메일@naver.com",
-"password": "비밀번호"
+  "userId": "owner1",
+  "userName": "가게주인1",
+  "phone": "010-0101-1111",
+  "email": "이메일@naver.com",
+  "password": "비밀번호"
 }
 ```
 
 
 #### 점주 로그인
 POST /auth/owner/signin
-<li>요청 예시</li>
+* 요청 예시
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
 
 #### 사용자 회원가입
 POST auth/signup
-<li>요청 예시</li>
+* 요청 예시
 ```json
 {
-"userId": "user",
-"userName": "사용자",
-"phone": "010-0101-1111",
-"email": "이메일@naver.com",
-"password": "비밀번호"
+  "userId": "user",
+  "userName": "사용자",
+  "phone": "010-0101-1111",
+  "email": "이메일@naver.com",
+  "password": "비밀번호"
 }
 ```
 
 #### 사용자 로그인
 POST auth/signin
-<li>요청 예시</li>
+* 요청 예시
+
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
 
 ----------
 ### 점주 
 #### 가게 등록
 POST /auth/owner/register/store
+* 요청 예시
+
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
 
 #### 가게 수정
 POST /auth/owner/update/store
+* 요청 예시
+
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
 
 #### 가게 삭제
 DELETE /auth/owner/register/store
 
 #### 가게 조회
-가게주인 아이디로 가게 조회 기능
-GET auth/owner/read/store/?ownerId=onwer1
++ 가게주인 아이디로 가게 조회 기능
 
+GET auth/owner/read/store/?ownerId=onwer1
 
 #### 사용자 예약 조회
 /auth/owner/reservation/{ownerId}/{storeId}
@@ -102,24 +135,74 @@ GET /auth/owner/reservation/onwer1/1
 
 ### 사용자
 #### 예약 등록
+POST /reserve
+* 요청 예시
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
+
 #### 예약 수정
+POST /update/reservation?reservationId=1
+* 요청 예시
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
+
 #### 예약 삭제
+DELETE /delete/reservation?reservationId=1
+* 요청 예시
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
+
 #### 예약 조회
+* 요청 예시
+```json
+{
+  "userId": "owner1",
+  "password": "비밀번호"
+}
+```
 
 #### 키오스크에서 자신의 예약 조회
-승인된 예약만 조회 가능
++ 승인된 예약만 조회 가능
+
 GET kiosk/user1?storeId=1
 
 #### 키오스크 도착
 예약이 승인되었을 경우에만 가능
+
 POST /kiosk/arrive/?reservationId=1
 
 
 #### 리뷰 등록
 POST /register/review?reservationId=1
+* 요청 예시 
+```json
+{
+    "score" : 5,
+    "review" : "맛있었어요."
+}
+```
 
 #### 리뷰 수정
 POST /update/review?reviewId=3
+* 요청 예시
+```json
+{
+    "score" : 3,
+    "review" : "맛은 있었지만, 간이 너무 강했습니다."
+}
+```
 
 #### 리뷰 삭제
 DELETE /delete/review?reviewId=1
