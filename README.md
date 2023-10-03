@@ -32,7 +32,9 @@
 ### 공통 인증
 * 회원가입
   + 가입시 아이디와 이메일은 같은 경우 가입이 불가능 함
+  + 비밀번호는 암호화된 상태로 database에 저장됩니다.
 * 로그인
+  + 로그인후 토큰 유효 시간은 1시간 입니다.
 * 회원정보 수정(핸드폰 번호) > TODO
 * 비밀번호 수정 > TODO
 
@@ -65,10 +67,10 @@ POST auth/signup
 * 요청 예시
 ```json
 {
-  "userId": "user",
-  "userName": "사용자",
+  "userId": "user1",
+  "userName": "사용자1",
   "phone": "010-0101-1111",
-  "email": "이메일@naver.com",
+  "email": "user이메일@naver.com",
   "password": "비밀번호"
 }
 ```
@@ -79,7 +81,7 @@ POST auth/signin
 
 ```json
 {
-  "userId": "owner1",
+  "userId": "user1",
   "password": "비밀번호"
 }
 ```
@@ -92,8 +94,11 @@ POST /auth/owner/register/store
 
 ```json
 {
-  "userId": "owner1",
-  "password": "비밀번호"
+    "storeName" : "맛있는 삼겹살집",
+    "phone" : "010-0000-0001",
+    "addr" : "삼겹살집 주소1",
+    "addrDetail" : "삼겹살집 상세 주소 1",
+    "description" : "여기는 신선하고 맛있는 삼겹살을 판매하는 곳입니다."
 }
 ```
 
@@ -103,8 +108,11 @@ POST /auth/owner/update/store
 
 ```json
 {
-  "userId": "owner1",
-  "password": "비밀번호"
+    "storeName" : "맛있는 삼겹살집",
+    "phone" : "010-0000-0001",
+    "addr" : "삼겹살집 주소1",
+    "addrDetail" : "삼겹살집 상세 주소 수정1",
+    "description" : "여기는 신선하고 맛있는 삼겹살을 판매하는 곳입니다."
 }
 ```
 
@@ -134,54 +142,63 @@ GET /auth/owner/reservation/onwer1/1
 --------
 
 ### 사용자
+#### 가게 조회
+* 가게 전체 조회
+
+  GET /store/all
+
+* 가게 이름으로 조회
+  
+  GET /store/search/storename/맛있는 삼겹살집
+
+* 가게 주소로 조회
+
+  GET /store/search/storeaddr/삼겹살집 주소1
+
+
 #### 예약 등록
 POST /reserve
 * 요청 예시
 ```json
 {
-  "userId": "owner1",
-  "password": "비밀번호"
+    "storeId" : 1,
+    "storeName" : "맛있는 삼겹살집",
+    "resDt" : "2023-10-02T21:50:00",
+    "people" : 2
 }
 ```
 
 #### 예약 수정
-POST /update/reservation?reservationId=1
++ 점주가 예약을 승인하거나 거절하지 않은 경우, WAITING일 경우에만 수정 가능
+
+  POST /update/reservation?reservationId=1
 * 요청 예시
 ```json
 {
-  "userId": "owner1",
-  "password": "비밀번호"
+    "storeId" : 1,
+    "storeName" : "맛있는 삼겹살집",
+    "resDt" : "2023-10-02T21:50:00",
+    "people" : 2
 }
 ```
 
 #### 예약 삭제
 DELETE /delete/reservation?reservationId=1
-* 요청 예시
-```json
-{
-  "userId": "owner1",
-  "password": "비밀번호"
-}
-```
 
 #### 예약 조회
-* 요청 예시
-```json
-{
-  "userId": "owner1",
-  "password": "비밀번호"
-}
-```
++ Mypage에서 조회
+
+  GET /get/myreservations
 
 #### 키오스크에서 자신의 예약 조회
 + 승인된 예약만 조회 가능
 
-GET kiosk/user1?storeId=1
+  GET kiosk/user1?storeId=1
 
 #### 키오스크 도착
-예약이 승인되었을 경우에만 가능
++ 예약이 승인되었을 경우에만 가능
 
-POST /kiosk/arrive/?reservationId=1
+  POST /kiosk/arrive/?reservationId=1
 
 
 #### 리뷰 등록
