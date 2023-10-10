@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto register(Auth.SignUp member) {
+    public boolean register(Auth.SignUp member) {
         boolean exits = this.userRepository.existsByUserId(member.getUserId()) ;
         if (exits) {
             throw new AlreadyExistUserException();
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService{
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.userRepository.save(member.toUserEntity());
-        return UserDto.of(result);
+        this.userRepository.save(member.toUserEntity());
+        return true;
     }
 
     @Override

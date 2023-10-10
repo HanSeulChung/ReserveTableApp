@@ -46,8 +46,9 @@ public class OwnerServiceImpl implements OwnerService{
         throw  new UserNotFoundException(username);
     }
     @Override
-    public OwnerDto register(Auth.SignUp member) {
-        boolean exits = this.ownerRepository.existsByUserId(member.getUserId()) ;
+    public boolean register(Auth.SignUp member) {
+        boolean returnValue = false;
+        boolean exits = this.ownerRepository.existsByUserId(member.getUserId());
         if (exits) {
             throw new AlreadyExistUserException();
         }
@@ -56,9 +57,12 @@ public class OwnerServiceImpl implements OwnerService{
         if (owner.isPresent() || user.isPresent()) {
             throw new AlreadyExistEmailException();
         }
+
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.ownerRepository.save(member.toOwnerEntity());
-        return OwnerDto.of(result);
+        this.ownerRepository.save(member.toOwnerEntity());
+        returnValue = true;
+
+        return returnValue;
     }
 
     @Override

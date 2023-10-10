@@ -1,23 +1,26 @@
 package com.chs.member.owner.controller;
 
-import com.chs.member.owner.service.OwnerService;
 import com.chs.member.model.Auth;
+import com.chs.member.owner.service.OwnerService;
 import com.chs.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
  * 점주 회원(Owner) 로그인 및 회원가입
  */
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/auth/owner")
 @RequiredArgsConstructor
 public class AuthOwnerController {
@@ -26,12 +29,26 @@ public class AuthOwnerController {
     private final OwnerService ownerService;
     private final TokenProvider tokenProvider;
 
+    @GetMapping("/signup")
+    public String signup() {
+        return "member/register";
+    }
+
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Valid Auth.SignUp request) {
+    public String signupSummit(Model model, HttpServletRequest request
+            ,@Valid Auth.SignUp parameter) {
         // 회원 가입 API
-        var result = this.ownerService.register(request);
+        var result = this.ownerService.register(parameter);
         log.info(String.valueOf(result));
-        return ResponseEntity.ok(result);
+        model.addAttribute("result", result);
+        return "member/register_complete";
+    }
+
+
+    @RequestMapping("/signin")
+    public String login() {
+
+        return "member/owner_login";
     }
 
     @PostMapping("/signin")
@@ -42,4 +59,5 @@ public class AuthOwnerController {
         log.info("user login -> " + request.getUserId());
         return ResponseEntity.ok(token);
     }
+
 }

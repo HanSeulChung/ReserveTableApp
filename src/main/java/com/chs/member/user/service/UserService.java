@@ -17,7 +17,7 @@ public interface UserService  extends UserDetailsService {
      * @return
      */
 
-    UserDto register(Auth.SignUp member);
+    boolean register(Auth.SignUp member);
 
     /**
      * login 정보

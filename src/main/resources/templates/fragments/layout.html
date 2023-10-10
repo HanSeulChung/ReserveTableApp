@@ -8,11 +8,13 @@
 <h1>메인 페이지</h1>
   <div th:fragment="fragment-body-before-login-menu">
     <div>
-      <a href="/auth/owner/signup">Owner용 로그인</a>
+      <a href="/">홈</a>
+      |
+      <a href="/auth/owner/signin">Owner용 로그인</a>
       |
       <a href="/auth/owner/signup">Owner용 회원 가입</a>
       |
-      <a href="/auth/singin">User용 로그인</a>
+      <a href="/auth/signin">User용 로그인</a>
       |
       <a href="/auth/signup">User용 회원 가입</a>
       |
@@ -25,6 +27,8 @@
 
 
   <div th:fragment="fragment-owner-body-menu">
+    <a href="/">홈</a>
+    |
     <a href="/admin/main.do"> Owner 메인 </a>
     |
     <a href="/admin/member/list.do"> 가게 관리 </a>
@@ -39,6 +43,8 @@
   </div>
 
   <div th:fragment="fragment-user-body-menu">
+    <a href="/">홈</a>
+    |
     <a href="/admin/main.do"> User 메인 </a>
     |
     <a href="/admin/member/list.do"> 가게 조회 </a>

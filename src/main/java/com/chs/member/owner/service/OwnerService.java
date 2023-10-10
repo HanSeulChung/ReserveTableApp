@@ -15,7 +15,7 @@ public interface OwnerService extends UserDetailsService {
      * @return
      */
 
-    OwnerDto register(Auth.SignUp member);
+    boolean register(Auth.SignUp member);
 
     /**
      * login 정보

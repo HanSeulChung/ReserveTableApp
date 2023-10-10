@@ -92,6 +92,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_USERLIST).hasAuthority("ROLE_USER")
                 .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll();
 
+
+        http.formLogin()
+                .loginPage("/auth/signin")
+                .failureHandler(getUserFailureHandler())
+                .successHandler(getUserSuccessHandler())
+                .permitAll();
+
+        http.formLogin()
+                .loginPage("/auth/owner/signin")
+                .failureHandler(getOwnerFailureHandler())
+                .successHandler(getOwnerSuccessHandler())
+                .permitAll();
+
+
         http
                 .httpBasic().disable()
                 .csrf().disable()
@@ -100,5 +114,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        http.exceptionHandling()
+                .accessDeniedPage("/error/denied");
     }
 }

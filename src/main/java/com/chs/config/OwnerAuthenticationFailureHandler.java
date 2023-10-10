@@ -24,7 +24,7 @@ public class OwnerAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
         
 
         setUseForward(true);
-        setDefaultFailureUrl("/auth/login?error=true");
+        setDefaultFailureUrl("/auth/owner/signin?error=true");
         request.setAttribute("errorMessage", msg);
 
         System.out.println("로그인에 실패하였습니다.");
