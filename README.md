@@ -126,13 +126,14 @@ GET auth/owner/read/store/?ownerId=onwer1
 
 #### 사용자 예약 조회
 /auth/owner/reservation/{ownerId}/{storeId}
+
 GET /auth/owner/reservation/onwer1/1
 
 #### 사용자 예약 승인
-/auth/owner/reservation/approve?reservationId=1
+POST /auth/owner/reservation/approve?reservationId=1
 
 #### 사용자 예약 거절
-/auth/owner/reservation/refuse?reservationId=1
+POST /auth/owner/reservation/refuse?reservationId=1
 
 
 #### 리뷰 조회
