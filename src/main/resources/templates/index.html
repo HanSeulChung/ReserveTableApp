@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>ReserveTableApp</title>
 </head>
 <body>
-<h1>메인 페이지</h1>
 
-<div th:if="${loggedInOwner}" >
-    <div th:replace="/fragments/layout.html  :: fragment-owner-body-menu"></div>
+<div th:if="${roles != null and roles.contains('ROLE_OWNER')}">
+    <!-- Show content for owners -->
+    <h1>Owner 메인 페이지</h1>
+    <div th:replace="/fragments/layout.html :: fragment-owner-body-menu"></div>
 </div>
 
-<div th:if="${loggedInUser}" >
-    <div th:replace="/fragments/layout.html  :: fragment-user-body-menu"></div>
+<div th:if="${roles != null and roles.contains('ROLE_USER')}">
+    <!-- Show content for users -->
+    <h1>User 페이지</h1>
+    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
 </div>
-<div th:if="${!(loggedInOwner or loggedInUser)}" th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
 
+<div th:if="${roles == null or #lists.isEmpty(roles)}">
+    <!-- Show content for anonymous users -->
+    <h1>메인 페이지</h1>
+    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+</div>
 </body>
 </html>

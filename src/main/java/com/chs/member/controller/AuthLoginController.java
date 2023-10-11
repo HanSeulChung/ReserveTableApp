@@ -5,6 +5,7 @@ import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -48,21 +49,23 @@ public class AuthLoginController {
 
     @RequestMapping("auth/signin")
     public String login(Model model) {
-
+//        SecurityContext context = SecurityContextHolder.getContext();
+//        context.setAuthentication();
         return "member/login";
     }
-//    @GetMapping("/auth/signinSuccess")
-//    public String loginSuccess(Model model, Principal principal) {
-//
-//        if(principal != null) {
-//            // Get the logged-in user's username
-//            String username = principal.getName();
-//            // Add the username to the Thymeleaf model
-//            model.addAttribute("username", username);
-//        }
-//
-//        return "member/login_success";
-//    }
+
+    @GetMapping("/auth/signinSuccess")
+    public String loginSuccess(Model model, Principal principal) {
+
+        if(principal != null) {
+            // Get the logged-in user's username
+            String username = principal.getName();
+            // Add the username to the Thymeleaf model
+            model.addAttribute("username", username);
+        }
+
+        return "member/login_success";
+    }
 
     @RequestMapping("/auth/logout")
     public String logout() {
