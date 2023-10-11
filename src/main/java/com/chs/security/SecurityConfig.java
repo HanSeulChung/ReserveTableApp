@@ -1,34 +1,37 @@
 package com.chs.security;
 
-import com.chs.config.OwnerAuthenticationFailureHandler;
-import com.chs.config.OwnerAuthenticationSuccessHandler;
-import com.chs.config.UserAuthenticationFailureHandler;
-import com.chs.config.UserAuthenticationSuccessHandler;
+import com.chs.config.*;
 import com.chs.member.owner.service.OwnerService;
 import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
+    private final AppConfig appConfig;
 
     private final UserService userService;
     private final OwnerService ownerService;
+
 
     @Bean
     UserAuthenticationFailureHandler getUserFailureHandler() {
@@ -38,18 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     UserAuthenticationSuccessHandler getUserSuccessHandler() {
 
-        return new UserAuthenticationSuccessHandler(userService);
-    }
-
-    @Bean
-    OwnerAuthenticationFailureHandler getOwnerFailureHandler() {
-
-        return new OwnerAuthenticationFailureHandler();
-    }
-    @Bean
-    OwnerAuthenticationSuccessHandler getOwnerSuccessHandler() {
-
-        return new OwnerAuthenticationSuccessHandler(ownerService);
+        return new UserAuthenticationSuccessHandler(userService, ownerService);
     }
 
     private static final String[] AUTH_WHITELIST = {
@@ -73,6 +65,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/myreservation/**"
     };
 
+
+//    private PrincipalDetailService principalDetailService;
+//
+//    @Autowired
+//    public SecurityConfig(PrincipalDetailService principalDetailService) {
+//        this.principalDetailService = principalDetailService;
+//    }
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(AUTH_WHITELIST);
@@ -86,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http
                 .authorizeRequests()
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
@@ -96,15 +96,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/auth/signin")
                 .failureHandler(getUserFailureHandler())
+                .defaultSuccessUrl("/auth/signinSuccess")
                 .successHandler(getUserSuccessHandler())
                 .permitAll();
 
-        http.formLogin()
-                .loginPage("/auth/owner/signin")
-                .failureHandler(getOwnerFailureHandler())
-                .successHandler(getOwnerSuccessHandler())
-                .permitAll();
-
+//        http.logout()
+//                .logoutUrl("/auth/logout")
+//                .logoutUrl("/");
 
         http
                 .httpBasic().disable()
@@ -118,5 +116,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.exceptionHandling()
                 .accessDeniedPage("/error/denied");
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService)
+                .passwordEncoder(appConfig.passwordEncoder());
+
+        auth.userDetailsService(ownerService)
+                .passwordEncoder(appConfig.passwordEncoder());
+
     }
 }

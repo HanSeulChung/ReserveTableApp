@@ -54,6 +54,11 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public List<StoreDto> getAllStore() {
+        return StoreDto.of(this.storeRepository.findAll());
+    }
+
+    @Override
     public List<StoreDto> getStoreByStoreName(String storeName) {
         return StoreDto.of(storeRepository.findAllByStoreName(storeName));
     }

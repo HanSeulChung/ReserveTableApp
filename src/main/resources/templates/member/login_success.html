@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+</head>
+<body>
+
+    <h1>로그인 성공</h1>
+    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+
+    <h2 th:text=" ${username} + '님 반갑습니다!'"></h2>
+    </div>
+
+    <form method="post" action="/auth/logout">
+
+        <div>
+            <button type="submit"> 로그아웃 </button>
+        </div>
+
+    </form>
+
+</body>
+</html>

@@ -5,19 +5,17 @@ import com.chs.member.owner.service.OwnerService;
 import com.chs.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
- * 점주 회원(Owner) 로그인 및 회원가입
+ * 점주 회원(Owner) 회원가입
  */
 @Slf4j
 @Controller
@@ -45,19 +43,19 @@ public class AuthOwnerController {
     }
 
 
-    @RequestMapping("/signin")
-    public String login() {
+//    @RequestMapping("/signin")
+//    public String login() {
+//
+//        return "member/owner_login";
+//    }
 
-        return "member/owner_login";
-    }
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
-        // 로그인 API
-        var member = this.ownerService.authenticate(request);
-        var token = this.tokenProvider.generateOwnerToken(member.getUserId());
-        log.info("user login -> " + request.getUserId());
-        return ResponseEntity.ok(token);
-    }
+//    @PostMapping("/signin")
+//    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
+//        // 로그인 API
+//        var member = this.ownerService.authenticate(request);
+//        var token = this.tokenProvider.generateOwnerToken(member.getUserId());
+//        log.info("user login -> " + request.getUserId());
+//        return ResponseEntity.ok(token);
+//    }
 
 }

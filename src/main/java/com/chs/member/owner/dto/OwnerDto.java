@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class OwnerDto {
     private String userId;
     private String userName;
+    private String email;
     private String phone;
     private String password;
     private LocalDateTime regDt;
@@ -30,6 +31,8 @@ public class OwnerDto {
         return OwnerDto.builder()
                 .userId(owner.getUserId())
                 .userName(owner.getUsername())
+                .email(owner.getEmail())
+                .password(owner.getPassword())
                 .phone(owner.getPhone())
                 .regDt(owner.getRegDt())
                 .udtDt(owner.getUdtDt())

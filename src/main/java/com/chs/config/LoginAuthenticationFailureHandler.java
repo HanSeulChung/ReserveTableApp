@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class OwnerAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -21,10 +21,10 @@ public class OwnerAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
         if (exception instanceof InternalAuthenticationServiceException) {
             msg = exception.getMessage();
         }
-
+        
 
         setUseForward(true);
-        setDefaultFailureUrl("/auth/owner/signin?error=true");
+        setDefaultFailureUrl("/member/login?error=true");
         request.setAttribute("errorMessage", msg);
 
         System.out.println("로그인에 실패하였습니다.");

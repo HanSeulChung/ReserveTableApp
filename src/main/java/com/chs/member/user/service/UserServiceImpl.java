@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +43,13 @@ public class UserServiceImpl implements UserService{
             return new org.springframework.security.core.userdetails.User(
                     owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
         } else if (user.isPresent()) {
+           User userPresent = user.get();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             return new org.springframework.security.core.userdetails.User(
-                    user.get().getUserId(), user.get().getPassword(), grantedAuthorities);
-        }
-        throw new UsernameNotFoundException("user가 없습니다.");
+                    userPresent.getUserId(), userPresent.getPassword(), grantedAuthorities);
+        } else {
+           throw new UsernameNotFoundException("user가 없습니다.");
+       }
     }
 
     @Override

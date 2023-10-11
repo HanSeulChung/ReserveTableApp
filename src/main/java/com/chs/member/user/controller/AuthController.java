@@ -40,20 +40,20 @@ public class AuthController {
         return "member/register_complete";
     }
 
-    @RequestMapping("/signin")
-    public String login() {
+//    @RequestMapping("/signin")
+//    public String login() {
+//
+//        return "member/user_login";
+//    }
 
-        return "member/user_login";
-    }
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
-        // 로그인 API
-        var user = this.userService.authenticate(request);
-        var token = this.tokenProvider.generateUserToken(user.getUserId());
-        log.info("user login -> " + request.getUserId());
-        return ResponseEntity.ok(token);
-    }
+//    @PostMapping("/signin")
+//    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
+//        // 로그인 APIauthenticate
+//        var user = this.userService.(request);
+//        var token = this.tokenProvider.generateUserToken(user.getUserId());
+//        log.info("user login -> " + request.getUserId());
+//        return ResponseEntity.ok(token);
+//    }
 
     @PostMapping("/edit")
     public ResponseEntity<?> edit(@RequestParam String userId,

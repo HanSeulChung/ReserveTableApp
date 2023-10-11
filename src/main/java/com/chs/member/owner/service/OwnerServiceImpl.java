@@ -1,14 +1,15 @@
 package com.chs.member.owner.service;
 
 import com.chs.exception.Impl.*;
+import com.chs.member.model.Auth;
 import com.chs.member.owner.dto.OwnerDto;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
 import com.chs.member.user.dto.MemberInput;
 import com.chs.member.user.entity.User;
-import com.chs.member.model.Auth;
 import com.chs.member.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,15 +36,17 @@ public class OwnerServiceImpl implements OwnerService{
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         if (owner.isPresent()) {
+            Owner ownerPresent = owner.get();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
             return new org.springframework.security.core.userdetails.User(
-                    owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
+                    ownerPresent.getUserId(), ownerPresent.getPassword(), grantedAuthorities);
         } else if (user.isPresent()) {
+            User userPresent = user.get();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             return new org.springframework.security.core.userdetails.User(
-                    user.get().getUserId(), user.get().getPassword(), grantedAuthorities);
+                    userPresent.getUserId(), userPresent.getPassword(), grantedAuthorities);
         }
-        throw  new UserNotFoundException(username);
+        throw new UserNotFoundException(username);
     }
     @Override
     public boolean register(Auth.SignUp member) {

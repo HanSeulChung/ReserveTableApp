@@ -46,6 +46,7 @@ public class Owner implements UserDetails {
         return Owner.builder()
                 .userId(ownerDto.getUserId())
                 .userName(ownerDto.getUserName())
+                .email(ownerDto.getEmail())
                 .phone(ownerDto.getPhone())
                 .password(ownerDto.getPassword())
                 .regDt(ownerDto.getRegDt())
@@ -65,7 +66,7 @@ public class Owner implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userName;
     }
 
     @Override

@@ -46,10 +46,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 
+
     public static User toEntity(UserDto userDto) {
         return User.builder()
                 .userId(userDto.getUserId())
                 .userName(userDto.getUserName())
+                .email(userDto.getEmail())
                 .phone(userDto.getPhone())
                 .password(userDto.getPassword())
                 .penalty(userDto.getPenalty())
@@ -70,7 +72,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userName;
     }
 
     @Override

@@ -2,17 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Owner 회원 로그인</title>
+    <title>ReserveTableApp</title>
 </head>
 <body>
 
-    <h1>Owner 회원 로그인</h1>
+    <h1>회원 로그인</h1>
     <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
 
     <div th:text="${errorMessage}">
     </div>
 
-    <form method="post" action="/auth/owner/signin">
+    <form method="post" action="/auth/signin">
 
         <div>
             <input type="text" name="username" placeholder="아이디를 입력" required/>

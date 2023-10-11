@@ -1,5 +1,6 @@
 package com.chs.config;
 
+import com.chs.member.owner.service.OwnerService;
 import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class UserAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final UserService userService;
+    private final OwnerService ownerService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -29,8 +31,18 @@ public class UserAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         String userId = userDetails.getUsername();
         WebAuthenticationDetails web = (WebAuthenticationDetails) authentication.getDetails();
 
-        // 회원 별 최종 로그인 날짜 업데이트 작업
-        userService.updateLastLoginDt(userId, LocalDateTime.now());
+        boolean isOwner = ownerService.loadUserByUsername(userId)
+                .getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_OWNER"));
+
+//        // 회원 별 최종 로그인 날짜 업데이트 작업
+        if(isOwner) {
+            ownerService.updateLastLoginDt(userId, LocalDateTime.now());
+        } else {
+            userService.updateLastLoginDt(userId, LocalDateTime.now());
+        }
+
 
         super.onAuthenticationSuccess(request, response, authentication);
     }
