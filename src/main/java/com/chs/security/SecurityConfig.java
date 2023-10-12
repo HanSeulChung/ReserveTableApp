@@ -7,6 +7,7 @@ import com.chs.member.owner.service.OwnerService;
 import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Configuration
@@ -25,7 +31,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
     private final AppConfig appConfig;
-
     private final UserService userService;
     private final OwnerService ownerService;
 
@@ -79,6 +84,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManager();
     }
 
+    @Bean
+    public SecurityContextHolderAwareRequestFilter securityContextHolderAwareRequestFilter() {
+        SecurityContextHolderAwareRequestFilter filter = new SecurityContextHolderAwareRequestFilter() {
+
+            protected boolean allowEmptyAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
+                return true; // Allow empty authentication
+            }
+        };
+        filter.setRolePrefix(""); // Remove the default "ROLE_" prefix
+        return filter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -94,7 +110,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/auth/signin")
                 .failureHandler(getUserFailureHandler())
                 .successHandler(getUserSuccessHandler())
-                .defaultSuccessUrl("/auth/signinSuccess", true)
                 .permitAll();
 
         http.logout()
@@ -112,15 +127,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.exceptionHandling()
                 .accessDeniedPage("/error/denied");
+
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService)
                 .passwordEncoder(appConfig.passwordEncoder());
 
         auth.userDetailsService(ownerService)
                 .passwordEncoder(appConfig.passwordEncoder());
-
+//        super.configure(auth);
     }
+
+
 }

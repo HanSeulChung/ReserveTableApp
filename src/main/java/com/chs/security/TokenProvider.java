@@ -31,21 +31,7 @@ public class TokenProvider {
      * @param userId
      * @return
      */
-    public String generateUserToken(String userId) {
-        Claims claims = Jwts.claims().setSubject(userId);
-
-        var now = new Date();
-        var expireDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now) // 토큰 생성 시간
-                .setExpiration(expireDate) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, this.secretKey) // 사용할 암호화 알고리즘, 비밀키
-                .compact();
-    }
-
-    public String generateOwnerToken(String userId) {
+    public String generateAuthToken(String userId) {
         Claims claims = Jwts.claims().setSubject(userId);
 
         var now = new Date();

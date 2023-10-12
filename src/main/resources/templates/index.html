@@ -6,22 +6,18 @@
 </head>
 <body>
 
-<div th:if="${roles != null and roles.contains('ROLE_OWNER')}">
-    <!-- Show content for owners -->
+<div th:if="${#strings.contains(authorities, 'ROLE_OWNER')}">
     <h1>Owner 메인 페이지</h1>
-    <div th:replace="/fragments/layout.html :: fragment-owner-body-menu"></div>
+    <div th:replace="/fragments/layout.html  :: fragment-owner-body-menu"></div>
 </div>
-
-<div th:if="${roles != null and roles.contains('ROLE_USER')}">
-    <!-- Show content for users -->
+<div th:if="${#strings.contains(authorities, 'ROLE_USER')}">
     <h1>User 페이지</h1>
-    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
+    <div th:replace="/fragments/layout.html  :: fragment-user-body-menu"></div>
 </div>
 
-<div th:if="${roles == null or #lists.isEmpty(roles)}">
-    <!-- Show content for anonymous users -->
+<div th:if="${#strings.contains(authorities, 'ROLE_ANONYMOUS')}">
     <h1>메인 페이지</h1>
-    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+    <div th:replace="/fragments/layout.html  :: fragment-body-before-login-menu"></div>
 </div>
 </body>
 </html>

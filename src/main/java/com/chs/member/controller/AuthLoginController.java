@@ -2,8 +2,12 @@ package com.chs.member.controller;
 
 import com.chs.member.owner.service.OwnerService;
 import com.chs.member.user.service.UserService;
+import com.chs.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Collections;
 
 
 @Slf4j
@@ -25,45 +31,30 @@ public class AuthLoginController {
     private final OwnerService ownerService;
     private final UserService userService;
 
-//    @GetMapping("auth/signin")
-//    public String loginGet() {
-//        return "member/login";
-//    }
-//
-//
-//    @PostMapping("auth/signin")
-//    public String login(Model model, Principal principal) {
-//
-//        if (principal != null) {
-//            // Get the logged-in user's username
-//            String username = principal.getName();
-//            // Add the username to the Thymeleaf model
-//            model.addAttribute("username", username);
-//        }
-//
-//
-//
-//        return "index";
-//    }
+    @Autowired
+    TokenProvider tokenProvider;
 
+    @GetMapping("auth/signin")
+    public String login() {
 
-    @RequestMapping("auth/signin")
-    public String login(Model model) {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        context.setAuthentication();
         return "member/login";
     }
 
+    @PostMapping("/auth/signin")
+    public String handleLogin(HttpServletRequest request, Model model) {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        String token = tokenProvider.generateAuthToken(username);
+        System.out.println("Generated Token: " + token);
+
+        return "member/login";
+
+    }
+
+
     @GetMapping("/auth/signinSuccess")
-    public String loginSuccess(Model model, Principal principal) {
-
-        if(principal != null) {
-            // Get the logged-in user's username
-            String username = principal.getName();
-            // Add the username to the Thymeleaf model
-            model.addAttribute("username", username);
-        }
-
+    public String loginSuccess() {
         return "member/login_success";
     }
 
