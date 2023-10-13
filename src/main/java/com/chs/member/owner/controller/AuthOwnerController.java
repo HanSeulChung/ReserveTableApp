@@ -2,7 +2,7 @@ package com.chs.member.owner.controller;
 
 import com.chs.member.model.Auth;
 import com.chs.member.owner.service.OwnerService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,7 @@ public class AuthOwnerController {
 
 
     private final OwnerService ownerService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
 
     @GetMapping("/signup")
     public String signup() {

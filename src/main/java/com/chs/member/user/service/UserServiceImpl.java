@@ -11,8 +11,11 @@ import com.chs.member.model.Auth;
 import com.chs.member.user.dto.MemberInput;
 import com.chs.type.MemberStatus;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,20 +40,35 @@ public class UserServiceImpl implements UserService{
         Optional<User> user = userRepository.findByUserId(username);
         Optional<Owner> owner = ownerRepository.findByUserId(username);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
+        UserDetails userDetails = null;
        if (owner.isPresent()) {
+           Owner ownerPresent = owner.get();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
-            return new org.springframework.security.core.userdetails.User(
-                    owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
+           // 로그인 성공 시 Authentication 객체 생성
+           userDetails = new org.springframework.security.core.userdetails.User(
+                   ownerPresent.getUserId(), ownerPresent.getPassword(), grantedAuthorities);
+
+           // 로그인 성공 시 Authentication 객체 생성
+           Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", grantedAuthorities);
+
+           // SecurityContextHolder에 설정
+           SecurityContextHolder.getContext().setAuthentication(authentication);
         } else if (user.isPresent()) {
            User userPresent = user.get();
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            return new org.springframework.security.core.userdetails.User(
-                    userPresent.getUserId(), userPresent.getPassword(), grantedAuthorities);
-        } else {
-           throw new UsernameNotFoundException("user가 없습니다.");
-       }
+           grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
+           userDetails = new org.springframework.security.core.userdetails.User(
+                   userPresent.getUserId(), userPresent.getPassword(), grantedAuthorities);
+
+           // 로그인 성공 시 Authentication 객체 생성
+           Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", grantedAuthorities);
+
+           // SecurityContextHolder에 설정
+           SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        }
+
+        return userDetails;
 
     }
 

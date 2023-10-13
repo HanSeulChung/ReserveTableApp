@@ -17,12 +17,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
-
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.CorsFilter;
 
 @Slf4j
 @Configuration
@@ -34,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final OwnerService ownerService;
 
+    @Autowired
+    private TokenAuthenticationProvider tokenAuthenticationProvider;
 
     @Bean
     UserAuthenticationFailureHandler getUserFailureHandler() {
@@ -68,12 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
 
-//    private PrincipalDetailService principalDetailService;
-//
-//    @Autowired
-//    public SecurityConfig(PrincipalDetailService principalDetailService) {
-//        this.principalDetailService = principalDetailService;
-//    }
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(AUTH_WHITELIST);
@@ -82,18 +74,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
-    }
-
-    @Bean
-    public SecurityContextHolderAwareRequestFilter securityContextHolderAwareRequestFilter() {
-        SecurityContextHolderAwareRequestFilter filter = new SecurityContextHolderAwareRequestFilter() {
-
-            protected boolean allowEmptyAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
-                return true; // Allow empty authentication
-            }
-        };
-        filter.setRolePrefix(""); // Remove the default "ROLE_" prefix
-        return filter;
     }
 
     @Override
@@ -110,20 +90,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/auth/signin")
                 .failureHandler(getUserFailureHandler())
                 .successHandler(getUserSuccessHandler())
+//                .loginProcessingUrl("/auth/signin")
+                .defaultSuccessUrl("/")
+//                .defaultSuccessUrl("/auth/signinSuccess", false)
                 .permitAll();
+        http.httpBasic();
 
         http.logout()
-                .logoutUrl("/auth/logout");
-
+                .logoutUrl("/auth/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    // Clearing SecurityContext on logout
+                    SecurityContextHolder.clearContext();
+                    // Redirect to the desired URL after logout
+                    response.sendRedirect("/auth/logout_success");
+                });
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .rememberMe()
+                .disable();
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+//        http
+//                .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
-                .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterAfter(this.authenticationFilter, CorsFilter.class);
 
         http.exceptionHandling()
                 .accessDeniedPage("/error/denied");
@@ -138,6 +130,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         auth.userDetailsService(ownerService)
                 .passwordEncoder(appConfig.passwordEncoder());
+
 //        super.configure(auth);
     }
 

@@ -4,7 +4,7 @@ package com.chs.member.owner.controller;
 import com.chs.member.owner.dto.StoreEditInput;
 import com.chs.member.owner.dto.StoreInput;
 import com.chs.member.owner.service.StoreService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class StoreCRUDController {
 
     private final StoreService storeService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
 
     @PostMapping("register/store")
     public ResponseEntity<?> registerStore(@RequestBody StoreInput request,

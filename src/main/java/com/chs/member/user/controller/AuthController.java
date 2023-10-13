@@ -2,7 +2,7 @@ package com.chs.member.user.controller;
 
 import com.chs.member.model.Auth;
 import com.chs.member.user.service.UserService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final UserService userService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
 
     @GetMapping("/signup")
     public String signup() {

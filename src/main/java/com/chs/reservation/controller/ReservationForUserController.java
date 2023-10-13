@@ -2,7 +2,7 @@ package com.chs.reservation.controller;
 
 import com.chs.reservation.dto.ReservationInput;
 import com.chs.reservation.service.ReservationService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationForUserController {
 
     private final ReservationService reservationService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
     @PostMapping("/reserve")
     public ResponseEntity<?> reserve(@RequestBody ReservationInput request,
                                      @RequestHeader("Authorization") String token) {

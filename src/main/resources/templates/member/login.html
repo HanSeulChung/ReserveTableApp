@@ -31,5 +31,30 @@
         <a href="/member/find-password"> 비밀번호 찾기</a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementsByName('username')[0].value;
+            const password = document.getElementsByName('password')[0].value;
+
+            const requestBody = {
+                username: username,
+                password: password
+            };
+
+            // 로그인 요청
+            axios.post('http://localhost:8080/auth/signin', requestBody)
+                .then(response => {
+                    const token = response.data.token;  // 서버에서 반환한 토큰
+                    // 이제 이 토큰을 다른 요청의 헤더에 포함하여 보낼 수 있습니다.
+                })
+                .catch(error => {
+                    console.error('로그인 요청 실패:', error);
+                });
+        });
+    </script>
+
 </body>
 </html>
