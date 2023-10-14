@@ -1,8 +1,6 @@
 package com.chs.member.controller;
 
-import com.chs.member.owner.service.OwnerService;
 import com.chs.member.service.MemberService;
-import com.chs.member.user.service.UserService;
 import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -74,11 +71,6 @@ public class AuthLoginController {
     @RequestMapping("/auth/logout_success")
     public String logoutSuccess() {
         return "member/logout_success";
-    }
-
-    @GetMapping("/reset/password")
-    public String resetPassword() {
-        return "/member/reset_password";
     }
 
 }

@@ -1,6 +1,7 @@
 package com.chs.member.service;
 
 import com.chs.components.MailComponents;
+import com.chs.exception.Impl.InvalidResetPasswordDt;
 import com.chs.member.model.ResetPasswordInput;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
@@ -14,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -96,5 +98,79 @@ public class MemberServiceImpl implements MemberService{
         mailComponents.sendMail(email, subject, text);
 
         return false;
+    }
+
+    @Override
+    public boolean resetPassword(String uuid, String password) {
+
+        String encPassword = "";
+        Optional<User> optionalUser = userRepository.findByResetPasswordKey(uuid);
+        Optional<Owner> optionalOwner = ownerRepository.findByResetPasswordKey(uuid);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (user.getResetPasswordLimitDt() == null) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            if (user.getResetPasswordLimitDt().isBefore(LocalDateTime.now())) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            encPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            user.setPassword(encPassword);
+            user.setResetPasswordKey("");
+            user.setResetPasswordLimitDt(null);
+            userRepository.save(user);
+        } else {
+            Owner owner = optionalOwner.get();
+            if (owner.getResetPasswordLimitDt() == null) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            if (owner.getResetPasswordLimitDt().isBefore(LocalDateTime.now())) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            encPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            owner.setPassword(encPassword);
+            owner.setPassword(encPassword);
+            owner.setResetPasswordKey("");
+            owner.setResetPasswordLimitDt(null);
+            ownerRepository.save(owner);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean checkResetPassword(String uuid) {
+        Optional<User> optionalUser = userRepository.findByResetPasswordKey(uuid);
+        Optional<Owner> optionalOwner = ownerRepository.findByResetPasswordKey(uuid);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (user.getResetPasswordLimitDt() == null) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            if (user.getResetPasswordLimitDt().isBefore(LocalDateTime.now())) {
+                throw new InvalidResetPasswordDt();
+            }
+
+        } else {
+            Owner owner = optionalOwner.get();
+            if (owner.getResetPasswordLimitDt() == null) {
+                throw new InvalidResetPasswordDt();
+            }
+
+            if (owner.getResetPasswordLimitDt().isBefore(LocalDateTime.now())) {
+                throw new InvalidResetPasswordDt();
+            }
+        }
+
+        return true;
     }
 }
