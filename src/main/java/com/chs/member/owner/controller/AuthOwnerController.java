@@ -41,21 +41,4 @@ public class AuthOwnerController {
         model.addAttribute("result", result);
         return "member/register_complete";
     }
-
-
-//    @RequestMapping("/signin")
-//    public String login() {
-//
-//        return "member/owner_login";
-//    }
-
-//    @PostMapping("/signin")
-//    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
-//        // 로그인 API
-//        var member = this.ownerService.authenticate(request);
-//        var token = this.tokenProvider.generateOwnerToken(member.getUserId());
-//        log.info("user login -> " + request.getUserId());
-//        return ResponseEntity.ok(token);
-//    }
-
 }

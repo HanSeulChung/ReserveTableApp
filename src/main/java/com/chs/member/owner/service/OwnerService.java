@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface OwnerService extends UserDetailsService {
+public interface OwnerService {
     /**
      * 회원가입 정보 저장
      * @param member

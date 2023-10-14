@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@ToString
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "USER")
+@Data
 @Builder
 public class User implements UserDetails {
     @Id
@@ -39,6 +39,9 @@ public class User implements UserDetails {
     private LocalDateTime lastLoginDt;
 
     private int penalty;
+
+    private String resetPasswordKey;
+    private LocalDateTime resetPasswordLimitDt;
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;

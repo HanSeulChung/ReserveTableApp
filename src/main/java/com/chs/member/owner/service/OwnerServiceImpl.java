@@ -10,8 +10,11 @@ import com.chs.member.user.entity.User;
 import com.chs.member.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,25 +32,6 @@ public class OwnerServiceImpl implements OwnerService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUserId(username);
-        Optional<Owner> owner = ownerRepository.findByUserId(username);
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
-        if (owner.isPresent()) {
-            Owner ownerPresent = owner.get();
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
-            return new org.springframework.security.core.userdetails.User(
-                    ownerPresent.getUserId(), ownerPresent.getPassword(), grantedAuthorities);
-        } else if (user.isPresent()) {
-            User userPresent = user.get();
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            return new org.springframework.security.core.userdetails.User(
-                    userPresent.getUserId(), userPresent.getPassword(), grantedAuthorities);
-        }
-        throw new UserNotFoundException(username);
-    }
     @Override
     public boolean register(Auth.SignUp member) {
         boolean returnValue = false;

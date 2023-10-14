@@ -4,6 +4,7 @@ import com.chs.config.AppConfig;
 import com.chs.config.UserAuthenticationFailureHandler;
 import com.chs.config.UserAuthenticationSuccessHandler;
 import com.chs.member.owner.service.OwnerService;
+import com.chs.member.service.MemberService;
 import com.chs.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.CorsFilter;
 
@@ -29,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AppConfig appConfig;
     private final UserService userService;
     private final OwnerService ownerService;
+    private final MemberService memberService;
 
     @Autowired
     private TokenAuthenticationProvider tokenAuthenticationProvider;
@@ -41,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     UserAuthenticationSuccessHandler getUserSuccessHandler() {
 
-        return new UserAuthenticationSuccessHandler(userService, ownerService);
+        return new UserAuthenticationSuccessHandler();
     }
 
     private static final String[] AUTH_WHITELIST = {
@@ -83,25 +84,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
                 .antMatchers(AUTH_USERLIST).hasAuthority("ROLE_USER")
-                .antMatchers("/**/signup", "/**/signin","/store/all", "/store/search/**").permitAll();
+                .antMatchers(
+                        "/**/signup"
+                        , "/**/signin"
+                        ,"/store/all"
+                        , "/store/search/**"
+                        ,"/find-password"
+                        ,"/reset/password").permitAll();
 
 
         http.formLogin()
                 .loginPage("/auth/signin")
                 .failureHandler(getUserFailureHandler())
                 .successHandler(getUserSuccessHandler())
-//                .loginProcessingUrl("/auth/signin")
-                .defaultSuccessUrl("/")
-//                .defaultSuccessUrl("/auth/signinSuccess", false)
+                .defaultSuccessUrl("/auth/signinSuccess")
                 .permitAll();
-        http.httpBasic();
 
         http.logout()
                 .logoutUrl("/auth/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
-                    // Clearing SecurityContext on logout
                     SecurityContextHolder.clearContext();
-                    // Redirect to the desired URL after logout
                     response.sendRedirect("/auth/logout_success");
                 });
         http
@@ -125,11 +127,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService)
+        auth.userDetailsService(memberService)
                 .passwordEncoder(appConfig.passwordEncoder());
 
-        auth.userDetailsService(ownerService)
-                .passwordEncoder(appConfig.passwordEncoder());
+//        auth.userDetailsService(ownerService)
+//                .passwordEncoder(appConfig.passwordEncoder());
 
 //        super.configure(auth);
     }

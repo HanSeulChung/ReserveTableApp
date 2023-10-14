@@ -1,6 +1,7 @@
 package com.chs.config;
 
 import com.chs.member.owner.service.OwnerService;
+import com.chs.member.service.MemberService;
 import com.chs.member.user.service.UserService;
 import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,14 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private final UserService userService;
-    private final OwnerService ownerService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private OwnerService ownerService;
+
+    @Autowired
+    private MemberService memberService;
+
     @Autowired
     TokenAuthenticationProvider tokenProvider;
     private static final Logger logger = LoggerFactory.getLogger(UserAuthenticationSuccessHandler.class);
@@ -47,7 +54,7 @@ public class UserAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
         String userId = userDetails.getUsername();
         WebAuthenticationDetails web = (WebAuthenticationDetails) authentication.getDetails();
 
-        boolean isOwner = ownerService.loadUserByUsername(userId)
+        boolean isOwner = memberService.loadUserByUsername(userId)
                 .getAuthorities()
                 .stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_OWNER"));

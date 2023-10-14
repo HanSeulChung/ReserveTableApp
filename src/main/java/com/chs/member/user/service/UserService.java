@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface UserService  extends UserDetailsService {
+public interface UserService {
     /**
      * 회원가입 정보 저장
      * @param member

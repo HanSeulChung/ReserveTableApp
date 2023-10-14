@@ -1,19 +1,14 @@
 package com.chs.security;
 
+import com.chs.member.service.MemberService;
 import com.chs.member.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,7 +20,7 @@ public class TokenAuthenticationProvider  {
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 1 hour
-    private static UserService userService;
+    private static MemberService memberService;
 
     @Value("${spring.jwt.secret}")
     private String secretKey;
@@ -54,7 +49,7 @@ public class TokenAuthenticationProvider  {
 
     }
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.userService.loadUserByUsername(this.getUserId(jwt));
+        UserDetails userDetails = this.memberService.loadUserByUsername(this.getUserId(jwt));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
     public String getUserId(String token) {

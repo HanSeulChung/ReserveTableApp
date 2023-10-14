@@ -18,12 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "OWNER")
+@Data
 @Builder
+@Entity(name = "OWNER")
 public class Owner implements UserDetails {
     @Id
     private String userId;
@@ -38,6 +37,9 @@ public class Owner implements UserDetails {
 
     private MemberStatus status;  //이용가능한상태, 정지상태
     private LocalDateTime lastLoginDt;
+
+    private String resetPasswordKey;
+    private LocalDateTime resetPasswordLimitDt;
 
     @OneToMany(mappedBy = "owner")
     private List<Store> stores;

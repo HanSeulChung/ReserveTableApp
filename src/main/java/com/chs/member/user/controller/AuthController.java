@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
- * 일반 회원(User) 로그인 및 회원가입
+ * 일반 회원(User) 회원가입
  */
 @Slf4j
 @Controller
@@ -39,21 +39,6 @@ public class AuthController {
         model.addAttribute("result", result);
         return "member/register_complete";
     }
-
-//    @RequestMapping("/signin")
-//    public String login() {
-//
-//        return "member/user_login";
-//    }
-
-//    @PostMapping("/signin")
-//    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
-//        // 로그인 APIauthenticate
-//        var user = this.userService.(request);
-//        var token = this.tokenProvider.generateUserToken(user.getUserId());
-//        log.info("user login -> " + request.getUserId());
-//        return ResponseEntity.ok(token);
-//    }
 
     @PostMapping("/edit")
     public ResponseEntity<?> edit(@RequestParam String userId,

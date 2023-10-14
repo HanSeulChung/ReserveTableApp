@@ -28,7 +28,7 @@ public class StoreListViewController {
 
         List<StoreDto> storeDtoList = this.storeService.getAllStore();
         model.addAttribute("list", storeDtoList);
-        return "store/all";
+        return "list";
     }
 
     @GetMapping("/search/storename/{storeName}")

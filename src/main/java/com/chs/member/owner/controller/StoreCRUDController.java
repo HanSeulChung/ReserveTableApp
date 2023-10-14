@@ -20,6 +20,12 @@ public class StoreCRUDController {
     private final StoreService storeService;
     private final TokenAuthenticationProvider tokenProvider;
 
+    @GetMapping("/store")
+    public String storeManage(){
+
+        return "store/store_manage";
+    }
+
     @PostMapping("register/store")
     public ResponseEntity<?> registerStore(@RequestBody StoreInput request,
                                            @RequestHeader("Authorization") String token) {

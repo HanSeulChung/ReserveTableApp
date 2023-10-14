@@ -40,4 +40,10 @@ public class MainController {
         model.addAttribute("authorities", authorities);
         return "index";
     }
+
+    @RequestMapping("/error/denied")
+    public String errorDenied() {
+
+        return "error/denied";
+    }
 }
