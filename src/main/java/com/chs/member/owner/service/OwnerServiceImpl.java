@@ -52,17 +52,6 @@ public class OwnerServiceImpl implements OwnerService{
         return returnValue;
     }
 
-    @Override
-    public OwnerDto authenticate(Auth.SignIn member) {
-        var user = this.ownerRepository.findByUserId(member.getUsername())
-                .orElseThrow(() -> new NoUserIdException());
-
-        if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new UnmatchPasswordException();
-        }
-
-        return OwnerDto.of(user);
-    }
 
     @Override
     public List<OwnerDto> list(Auth.SignIn member) {

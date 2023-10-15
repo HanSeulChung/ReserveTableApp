@@ -53,18 +53,6 @@ public class UserServiceImpl implements UserService{
         return true;
     }
 
-    @Override
-    public UserDto authenticate(Auth.SignIn member) {
-
-        var user = this.userRepository.findByUserId(member.getUsername())
-                .orElseThrow(() -> new NoUserIdException());
-
-        if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new UnmatchPasswordException();
-        }
-
-        return UserDto.of(user);
-    }
 
     @Override
     public List<UserDto> list(Auth.SignIn member) {

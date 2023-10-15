@@ -2,12 +2,18 @@ package com.chs.member.service;
 
 import com.chs.components.MailComponents;
 import com.chs.exception.Impl.InvalidResetPasswordDt;
+import com.chs.exception.Impl.NoUserIdException;
+import com.chs.exception.Impl.UnmatchPasswordException;
+import com.chs.exception.Impl.UserNotFoundException;
 import com.chs.member.model.ResetPasswordInput;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
+import com.chs.member.owner.service.OwnerService;
 import com.chs.member.user.entity.User;
 import com.chs.member.user.repository.UserRepository;
+import com.chs.member.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +37,8 @@ public class MemberServiceImpl implements MemberService{
 
     private final OwnerRepository ownerRepository;
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final MailComponents mailComponents;
 
@@ -65,9 +74,36 @@ public class MemberServiceImpl implements MemberService{
             // SecurityContextHolder에 설정
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
+        if (userDetails == null) {
+            throw new UserNotFoundException(username);
+        }
+
         return userDetails;
     }
 
+
+    @Override
+    public boolean authenticate(String username, String password) {
+
+        Optional<User> user = userRepository.findByUserId(username);
+        Optional<Owner> owner = ownerRepository.findByUserId(username);
+        if (owner.isPresent()) {
+            if (!this.passwordEncoder.matches(password, owner.get().getPassword())) {
+                throw new UnmatchPasswordException();
+            }
+
+        } else if(user.isPresent()) {
+            if (!this.passwordEncoder.matches(password, user.get().getPassword())) {
+                throw new UnmatchPasswordException();
+            }
+
+        } else {
+            throw new NoUserIdException();
+        }
+
+        return true;
+    }
     @Override
     public boolean sendResetPassword(ResetPasswordInput parameter) {
 

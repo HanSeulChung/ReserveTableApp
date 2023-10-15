@@ -1,7 +1,9 @@
 package com.chs.member.controller;
 
 import com.chs.member.model.Auth;
+import com.chs.member.owner.service.OwnerService;
 import com.chs.member.service.MemberService;
+import com.chs.member.user.service.UserService;
 import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @RequiredArgsConstructor
 public class AuthLoginController {
+
     private final MemberService memberService;
 
     @Autowired
@@ -36,18 +39,30 @@ public class AuthLoginController {
         return "member/login";
     }
 
-    @PostMapping(value = "/auth/signin")
+    @RequestMapping(value = "/auth/signin", method = RequestMethod.POST)
     public String handleLogin(HttpServletRequest httpRequest, Model model) {
 
         String username = httpRequest.getParameter("username");
-        String token = tokenProvider.generateAuthToken(username);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
-        UserDetails userDetails = memberService.loadUserByUsername(username);
+        String password = httpRequest.getParameter("password");
 
-//         로그인 성공 시 Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        model.addAttribute("username", username);
+        try {
+            if (memberService.authenticate(username, password)) {
+                UserDetails userDetails = memberService.loadUserByUsername(username);
+
+                String token = tokenProvider.generateAuthToken(username);
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", "Bearer " + token);
+
+                // 로그인 성공 시 Authentication 객체 생성
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                model.addAttribute("username", username);
+            }
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "member/login";
+        }
 
         return "member/login_success";
     }
