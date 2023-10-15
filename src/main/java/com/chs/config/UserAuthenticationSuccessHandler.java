@@ -70,7 +70,7 @@ public class UserAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
 
         response.addHeader("Authorization", "Bearer " + token);
         SecurityContextHolder.getContext().setAuthentication(auth);
-//        super.onAuthenticationSuccess(request, response, auth);
+        super.onAuthenticationSuccess(request, response, auth);
     }
 
 

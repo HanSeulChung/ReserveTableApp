@@ -1,5 +1,6 @@
 package com.chs.member.controller;
 
+import com.chs.member.model.Auth;
 import com.chs.member.service.MemberService;
 import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,24 +36,19 @@ public class AuthLoginController {
         return "member/login";
     }
 
-    @RequestMapping(value = "/auth/signin", method = RequestMethod.POST)
-    public String handleLogin(HttpServletRequest request, Model model) {
+    @PostMapping(value = "/auth/signin")
+    public String handleLogin(HttpServletRequest httpRequest, Model model) {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = httpRequest.getParameter("username");
         String token = tokenProvider.generateAuthToken(username);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
-
-
         UserDetails userDetails = memberService.loadUserByUsername(username);
-        // 로그인 성공 시 Authentication 객체 생성
+
+//         로그인 성공 시 Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
-        // SecurityContextHolder에 설정
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         model.addAttribute("username", username);
+
         return "member/login_success";
     }
 

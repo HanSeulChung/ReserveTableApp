@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter authenticationFilter;
@@ -80,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+
         http
                 .authorizeRequests()
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
@@ -97,7 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/auth/signin")
                 .failureHandler(getUserFailureHandler())
                 .successHandler(getUserSuccessHandler())
-                .defaultSuccessUrl("/auth/signinSuccess")
+                .successForwardUrl("/auth/signin")
                 .permitAll();
 
         http.logout()
@@ -133,8 +136,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.userDetailsService(ownerService)
 //                .passwordEncoder(appConfig.passwordEncoder());
 
-//        super.configure(auth);
+        super.configure(auth);
     }
-
 
 }

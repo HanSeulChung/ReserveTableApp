@@ -13,7 +13,7 @@ public class Auth {
     @Data
     public static class SignIn {
         @NotBlank(message = "로그인 시 아이디 입력이 필수입니다.")
-        private String userId;
+        private String username;
         @Size(max = 4)
         @NotBlank(message = "최소 4자 이상 비밀번호를 입력해야합니다.")
         private String password;
