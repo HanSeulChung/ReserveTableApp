@@ -11,6 +11,30 @@ import java.util.List;
 
 public interface StoreService {
 
+    // 타임리프용
+    /**
+     * 가게 등록
+     */
+    boolean add(StoreInput parameter, String ownerId);
+
+    /**
+     * 가게 수정
+     */
+    boolean edit(StoreInput parameter);
+
+    /**
+     * 가게 삭제
+     */
+    boolean delete(String idList);
+
+
+    /**
+     * 가게 상세정보
+     */
+    StoreDto getById(long id);
+
+    // REST API용
+
     /**
      * 가게 등록
      */

@@ -88,12 +88,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_OWNERLIST).hasAuthority("ROLE_OWNER")
                 .antMatchers(AUTH_USERLIST).hasAuthority("ROLE_USER")
                 .antMatchers(
-                        "/**/signup"
-                        , "/**/signin"
-                        ,"/store/all"
-                        , "/store/search/**"
-                        ,"/find-password"
-                        ,"/reset/password").permitAll();
+                        "/",
+                        "/**/signup",
+                        "/**/signin",
+                        "/store/all",
+                        "/store/search/**",
+                        "/find-password",
+                        "/reset/password").permitAll();
 
 
         http.formLogin()

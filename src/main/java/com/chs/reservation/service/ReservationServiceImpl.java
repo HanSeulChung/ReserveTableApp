@@ -145,7 +145,7 @@ public class ReservationServiceImpl implements ReservationService{
         Map<Long, List<ReservationDto>> reservationMapByOwnerId = new HashMap<>();
 
         for (int i = 0; i < storeByOwnerId.size(); i++) {
-            reservationMapByOwnerId.put(storeByOwnerId.get(i).getStoreId() ,ReservationDto.of(reservationRepository.findAllByStore_Id(storeByOwnerId.get(i).getStoreId())));
+            reservationMapByOwnerId.put(storeByOwnerId.get(i).getId() ,ReservationDto.of(reservationRepository.findAllByStore_Id(storeByOwnerId.get(i).getId())));
         }
 
         return reservationMapByOwnerId;

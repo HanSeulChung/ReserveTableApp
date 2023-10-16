@@ -23,15 +23,14 @@
   </div>
 
 
-
   <div th:fragment="fragment-owner-body-menu">
     <a href="/">홈</a>
     |
-    <a href="/auth/owner/store"> 가게 관리 </a>
+    <a href="/auth/owner/store/list.do"> 가게 관리 </a>
     |
-    <a href="/admin/category/list.do"> 예약 관리 </a>
+    <a href="/auth/owner/reservation"> 예약 관리 </a>
     |
-    <a href="/admin/category/list.do"> 리뷰 관리 </a>
+    <a href="/auth/owner/review"> 리뷰 관리 </a>
     |
     <a href="/auth/logout"> 로그아웃 </a>
     <br/>
@@ -52,6 +51,18 @@
     <hr/>
   </div>
 
+
+  <div th:fragment="fragment-owner-store-manage-menu">
+    <a href="/">홈</a>
+    |
+    <a href="/auth/owner/register/store"> 가게 등록 </a>
+    |
+    <a href="/admin/category/list.do"> 가게 조회 </a>
+    |
+    <a href="/auth/logout"> 로그아웃 </a>
+    <br/>
+    <hr/>
+  </div>
 
 </body>
 </html>

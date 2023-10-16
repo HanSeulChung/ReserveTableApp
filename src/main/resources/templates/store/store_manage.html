@@ -1,10 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>ReserveTableApp</title>
+  <meta charset="UTF-8">
+  <title>ReserveTableApp</title>
+  <style>
+    .list table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .list table th, .list table td {
+      border:solid 1px #000;
+    }
+
+    p.nothing {
+      text-align: center;
+      padding: 100px;
+    }
+
+    .list .buttons {
+      position: relative;
+      padding: 10px 0;
+    }
+
+    .list  .buttons a,.list  .buttons button {
+      border-width: 0;
+      background-color: transparent;
+      text-decoration: underline;
+      font-size: 14px;
+      line-height: 20px;
+      height: 20px;
+      color: #000;
+      cursor: pointer;
+    }
+
+    .list .buttons .total-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .pager {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pager a.on {
+      font-weight: bold;
+      color: red;
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function() {
+
+      $('#selectAll').on('click', function() {
+
+        var checked = $(this).is(':checked');
+
+
+        $('#dataLIst input[type=checkbox]').each(function(k, v) {
+          $(this).prop('checked', checked);
+        });
+
+
+      });
+
+      $('#deleteButton').on('click', function() {
+
+        var $checked = $('#dataLIst input[type=checkbox]:checked');
+        if ($checked.length < 1) {
+          alert(' 삭제할 데이터를 선택해 주세요. ');
+          return false;
+        }
+
+        if (!confirm(' 선택한 데이터를 삭제하시겠습니까? ')) {
+          return false;
+        }
+
+        var idList = [];
+        $.each($checked, function(k, v) {
+          idList.push($(this).val());
+        });
+
+        console.log(idList);
+        console.log(idList.join(','));
+
+        var $deleteForm = $('form[name=deleteForm]');
+        $deleteForm.find('input[name=idList]').val( idList.join(',') );
+        $deleteForm.submit();
+
+      });
+    });
+  </script>
 </head>
+
 <body>
+  <h1>가게 관리</h1>
+  <div th:if="${#strings.contains(authorities, 'ROLE_OWNER')}">
+    <div th:replace="/fragments/layout.html  :: fragment-owner-store-manage-menu"></div>
+  <div class="list">
+
+    <div class="buttons">
+<!--      <p class="total-count">전체 <span th:text="${totalCount}"></span>개</p>-->
+
+      <a href="/auth/owner/store/add.do"> 가게 등록 </a>
+      <button id="deleteButton" type="button"> 가게 삭제 </button>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>
+          <input id="selectAll" type="checkbox" />
+        </th>
+        <th>
+          NO
+        </th>
+        <th>
+          가게명
+        </th>
+<!--        <th>-->
+<!--          이미지-->
+<!--        </th>-->
+        <th>
+          주소
+        </th>
+        <th>
+          상세 주소
+        </th>
+        <th>
+          등록일
+        </th>
+      </tr>
+      </thead>
+      <tbody id="dataLIst">
+      <tr th:each="x : ${list}">
+        <td>
+          <input type="checkbox" th:value="${x.id}" />
+        </td>
+        <td th:text="${x.id}">1</td>
+        <td>
+          <p>
+            <a th:href="'edit.do?id=' + ${x.id}" th:text="${x.storeName}">가게명</a>
+          </p>
+        </td>
+<!--        <td>-->
+<!--          <p>-->
+<!--            <img th:src= "${x.urlFilename}" width="200" height="300">-->
+<!--          </p>-->
+<!--        </td>-->
+        <td th:text="${x.addr}">주소</td>
+        <td th:text="${x.addrDetail}">상세 주소</td>
+        <td>
+          <p th:text="${x.regDt}">2021.01.01</p>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+
+    <div class="pager" th:utext="${pager}"></div>
+  </div>
+
+  <form name="deleteForm" method="post" action="/auth/owner/store/delete.do">
+    <input type="hidden" name="idList"/>
+  </form>
+  </div>
 
 </body>
 </html>
