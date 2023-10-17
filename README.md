@@ -1,20 +1,25 @@
 # ReserveTableApp
 
 ## 사용한 skill
-<li>Windows</li>
-<li>Java 11</li>
-<li>Gradle 7.2</li>
-<li>IntelliJ 2023.1.4</li>
-
-<li> Spring boot 2.5.6 </li>
-<li> JDK : Oracle Open JDK 20.0.1 </li>
-<li> MariaDB </li>
-<li> Spring Data JPA </li>
-<li> Junit5 </li>
-<li> jsonwebtoken 0.9.1 </li>
-<li> Lombok </li>
-<li> Swagger 3.0.0 </li>
-
+<div align=left> 
+  <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
+  <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000?style=for-the-badge&logo=intellij-idea&logoColor=white">
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
+  <img src="https://img.shields.io/badge/JDK-Oracle_Open_JDK-007396?style=for-the-badge&logo=mariaDB&logoColor=white"> 
+  <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+  </br>
+  <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+  <img src="https://img.shields.io/badge/Spring_Data_JPA-6DB33?style=for-the-badge&logo=mariaDB&logoColor=white"> 
+  </br>  
+  <img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white">
+  <img src="https://img.shields.io/badge/Json_Web_Tokens-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white"> 
+  <img src="https://img.shields.io/badge/Lombok-BC4520?style=for-the-badge&logo=lombok&logoColor=white"> 
+  <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+  </br>
+  <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+</div>
 
 ## 프로젝트 개요
 이 프로젝트는 사용자들이 식당이나 점포를 이용하기 전에 미리 예약을 할 수 있는 서비스를 개발하는 것을 목표로 합니다. 
@@ -26,6 +31,8 @@
 ## 프로젝트 엔티티
 ![image](https://github.com/HanSeulChung/ReserveTableApp/assets/94779505/cb82aa17-c7a8-4dc3-ba8b-ab294ba78ba5)
 
+## 타임리프 구현
+리뷰 작성 및 리뷰 확인은 추후 추가해야함.
 
 ## API 문서
 이 프로젝트는 다음과 같은 API 엔드포인트를 제공합니다.
