@@ -11,6 +11,37 @@ import java.util.List;
 
 public interface StoreService {
 
+    // 타임리프용
+    /**
+     * 자동완성
+     */
+    List<String> getAutoCompleteResultsByName(String query);
+
+    List<String> getAutoCompleteResultsByAddress(String query);
+
+    /**
+     * 가게 등록
+     */
+    boolean add(StoreInput parameter, String ownerId);
+
+    /**
+     * 가게 수정
+     */
+    boolean edit(StoreInput parameter);
+
+    /**
+     * 가게 삭제
+     */
+    boolean delete(String idList);
+
+
+    /**
+     * 가게 상세정보
+     */
+    StoreDto getById(long id);
+
+    // REST API용
+
     /**
      * 가게 등록
      */
@@ -20,6 +51,7 @@ public interface StoreService {
      * 전체 가게 조회
      */
     Page<StoreDto> getAllStore(Pageable pageable);
+    List<StoreDto> getAllStore();
 
     /**
      * 가게 이름으로 가게 조회
@@ -57,4 +89,5 @@ public interface StoreService {
     List<StoreDto> readStore(String ownerId);
 
 
+    List<StoreDto> getAllStores(String ownerId);
 }

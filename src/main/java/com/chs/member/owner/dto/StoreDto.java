@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @Data
 public class StoreDto {
-    private Long storeId;
+    private Long id;
     private String storeName ;
     private String phone;
     private String addr;
@@ -47,7 +47,7 @@ public class StoreDto {
     public static StoreDto of(Store store) {
 
         return StoreDto.builder()
-                .storeId(store.getId())
+                .id(store.getId())
                 .storeName(store.getStoreName())
                 .phone(store.getPhone())
                 .addr(store.getAddr())

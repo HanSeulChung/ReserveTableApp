@@ -19,8 +19,9 @@ import java.util.List;
 @Data
 public class ReservationDto {
 
-    private long reservationId;
-    private long storeId;
+    private long id;
+    private int storeOriginId;
+    private String storeName;
     private String userId;
     private String userPhone;
     private int people;
@@ -50,10 +51,11 @@ public class ReservationDto {
     public static ReservationDto of(Reservation reservation) {
 
         return ReservationDto.builder()
-                .reservationId(reservation.getId())
+                .id(reservation.getId())
+                .storeOriginId(reservation.getStoreOriginId())
+                .storeName(reservation.getStoreName())
                 .userId(reservation.getUser().getUserId())
                 .userPhone(reservation.getUser().getPhone())
-                .storeId(reservation.getStore().getId())
                 .status(reservation.getStatus())
                 .usingCode(reservation.getUsingCode())
                 .arriveCode(reservation.getArriveCode())
@@ -66,7 +68,8 @@ public class ReservationDto {
 
     public static ReservationDto fromInput(ReservationInput reservationInput) {
         return ReservationDto.builder()
-                .storeId(reservationInput.getStoreId())
+                .id(reservationInput.getId())
+                .storeOriginId(reservationInput.getStoreOriginId())
                 .usingCode(UsingCode.RESERVATION)
                 .status(ReservationCode.WAITING)
                 .regDt(LocalDateTime.now())

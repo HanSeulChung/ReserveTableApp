@@ -10,29 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface UserService  extends UserDetailsService {
+public interface UserService {
     /**
      * 회원가입 정보 저장
      * @param member
      * @return
      */
 
-    UserDto register(Auth.SignUp member);
-
-    /**
-     * login 정보
-     * @param member
-     * @return
-     */
-
-    UserDto authenticate(Auth.SignIn member);
-
-
-//    /**
-//     * 입력한 이메일로 비밀번호 초기화 정보를 전송
-//     */
-//    boolean sendResetPassword(ResetPasswordInput parameter);
-
+    boolean register(Auth.SignUp member);
 
     /**
      * 회원 목록 리턴(관리자에서만 사용 가능)

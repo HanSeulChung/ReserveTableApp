@@ -2,56 +2,67 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>fastlms</title>
+  <title>ReserveTableApp</title>
 </head>
 <body>
 <h1>메인 페이지</h1>
   <div th:fragment="fragment-body-before-login-menu">
     <div>
-      <a href="/auth/owner/signup">Owner용 로그인</a>
+      <a href="/">홈</a>
+      |
+      <a href="/auth/signin">로그인</a>
       |
       <a href="/auth/owner/signup">Owner용 회원 가입</a>
       |
-      <a href="/auth/singin">User용 로그인</a>
-      |
       <a href="/auth/signup">User용 회원 가입</a>
       |
-      <a href="/course">가게 목록</a>
+      <a href="/no-auth/store/all">가게 목록</a>
 
     </div>
     <hr/>
   </div>
 
 
-
   <div th:fragment="fragment-owner-body-menu">
-    <a href="/admin/main.do"> Owner 메인 </a>
+    <a href="/">홈</a>
     |
-    <a href="/admin/member/list.do"> 가게 관리 </a>
+    <a href="/auth/owner/store/list.do"> 가게 관리 </a>
     |
-    <a href="/admin/category/list.do"> 예약 관리 </a>
+    <a href="/auth/owner/reservation"> 예약 관리 </a>
     |
-    <a href="/admin/category/list.do"> 리뷰 관리 </a>
+    <a href="/auth/owner/review"> 리뷰 관리 </a>
     |
-    <a href="/member/logout"> 로그아웃 </a>
+    <a href="/auth/logout"> 로그아웃 </a>
     <br/>
     <hr/>
   </div>
 
   <div th:fragment="fragment-user-body-menu">
-    <a href="/admin/main.do"> User 메인 </a>
+    <a href="/">홈</a>
     |
-    <a href="/admin/member/list.do"> 가게 조회 </a>
+    <a href="/store/all"> 가게 조회 </a>
     |
-    <a href="/admin/category/list.do"> 예약 관리 </a>
+    <a href="/auth/user/reservation/list.do"> 예약 관리 </a>
     |
-    <a href="/admin/category/list.do"> 리뷰 관리 </a>
+    <a href="/auth/user/review"> 리뷰 관리 </a>
     |
-    <a href="/member/logout"> 로그아웃 </a>
+    <a href="/auth/logout"> 로그아웃 </a>
     <br/>
     <hr/>
   </div>
 
+
+  <div th:fragment="fragment-owner-store-manage-menu">
+    <a href="/">홈</a>
+    |
+    <a href="/auth/owner/store/add.do"> 가게 등록 </a>
+    |
+    <a href="/auth/owner/store/list.do"> 가게 조회 </a>
+    |
+    <a href="/auth/logout"> 로그아웃 </a>
+    <br/>
+    <hr/>
+  </div>
 
 </body>
 </html>

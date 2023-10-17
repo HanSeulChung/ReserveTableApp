@@ -23,6 +23,8 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    int storeOriginId;
+    String storeName;
 
     ReservationCode status; //상태(예약 대기, 예약 승인, 예약 거절)
     UsingCode usingCode;
@@ -54,8 +56,13 @@ public class Reservation {
         this.store = store;
     }
 
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
     public static Reservation toEntity(ReservationDto reservationDto) {
         return Reservation.builder()
+                .storeName(reservationDto.getStoreName())
+                .storeOriginId(reservationDto.getStoreOriginId())
                 .regDt(reservationDto.getRegDt())
                 .resDt(reservationDto.getResDt())
                 .status(reservationDto.getStatus())

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+
+    <style>
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .list table th, .list table td {
+            border:solid 1px #000;
+        }
+
+        p.nothing {
+            text-align: center;
+            padding: 100px;
+        }
+
+        .list .buttons {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .list  .buttons a,.list  .buttons button {
+            border-width: 0;
+            background-color: transparent;
+            text-decoration: underline;
+            font-size: 14px;
+            line-height: 20px;
+            height: 20px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .list .buttons .total-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .pager {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pager a.on {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+
+            $('#selectAll').on('click', function() {
+
+                var checked = $(this).is(':checked');
+
+
+                $('#dataLIst input[type=checkbox]').each(function(k, v) {
+                    $(this).prop('checked', checked);
+                });
+
+
+            });
+
+            $('#deleteButton').on('click', function() {
+
+                var $checked = $('#dataLIst input[type=checkbox]:checked');
+                if ($checked.length < 1) {
+                    alert(' 삭제할 데이터를 선택해 주세요. ');
+                    return false;
+                }
+
+                if (!confirm(' 선택한 데이터를 삭제하시겠습니까? ')) {
+                    return false;
+                }
+
+                var idList = [];
+                $.each($checked, function(k, v) {
+                    idList.push($(this).val());
+                });
+
+                console.log(idList);
+                console.log(idList.join(','));
+
+                var $deleteForm = $('form[name=deleteForm]');
+                $deleteForm.find('input[name=idList]').val( idList.join(',') );
+                $deleteForm.submit();
+            });
+        });
+    </script>
+</head>
+<body>
+<h1 th:text="${#authentication.name} + '님의 예약 조회'">예약 조회</h1>
+<div sec:authorize="hasRole('ROLE_USER')">
+    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
+</div>
+<div class="list">
+    <div class="buttons">
+        <button id="deleteButton" type="button"> 예약 삭제 </button>
+    </div>
+</div>
+<table th:if="${reservations.size() > 0}">
+    <thead>
+    <tr>
+        <th>
+            <input id="selectAll" type="checkbox" />
+        </th>
+        <th>가게명</th>
+        <th>예약 시간</th>
+        <th>인원</th>
+        <th>예약 등록 시간</th>
+    </tr>
+    </thead>
+    <tbody id="dataLIst">
+
+    <tr th:each="reservation : ${reservations}">
+        <td>
+            <input type="checkbox" th:value="${reservation.id}" />
+        </td>
+        <td>
+            <p>
+                <a th:href="'detail.do?id=' + ${reservation.id}" th:text="${reservation.storeName}">가게명</a>
+            </p>
+        </td>
+        <td th:text="${reservation.resDt}"></td>
+        <th th:text="${reservation.people}"></th>
+        <th th:text="${reservation.regDt}"></th>
+
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${reservations.size() == 0}">
+    <p>등록된 예약이 없습니다.</p>
+</div>
+
+<form name="deleteForm" method="post" action="/auth/user/reservation/delete.do">
+    <input type="hidden" name="idList"/>
+</form>
+</body>
+</html>

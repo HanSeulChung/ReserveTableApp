@@ -22,8 +22,14 @@
     </appender>
     <logger name="org.springframework" level="info"/>
     <logger name="org.hibernate" level="info"/>
+    <logger name="com.chs.config" level="debug" additivity="false"/>
+
+
     <root level="info">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
+    </root>
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>

@@ -11,13 +11,17 @@ import com.chs.member.model.Auth;
 import com.chs.member.user.dto.MemberInput;
 import com.chs.type.MemberStatus;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,27 +34,9 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        Optional<User> user = userRepository.findByUserId(username);
-        Optional<Owner> owner = ownerRepository.findByUserId(username);
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
-       if (owner.isPresent()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
-            return new org.springframework.security.core.userdetails.User(
-                    owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
-        } else if (user.isPresent()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            return new org.springframework.security.core.userdetails.User(
-                    user.get().getUserId(), user.get().getPassword(), grantedAuthorities);
-        }
-        throw new UsernameNotFoundException("user가 없습니다.");
-    }
 
     @Override
-    public UserDto register(Auth.SignUp member) {
+    public boolean register(Auth.SignUp member) {
         boolean exits = this.userRepository.existsByUserId(member.getUserId()) ;
         if (exits) {
             throw new AlreadyExistUserException();
@@ -63,22 +49,10 @@ public class UserServiceImpl implements UserService{
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.userRepository.save(member.toUserEntity());
-        return UserDto.of(result);
+        this.userRepository.save(member.toUserEntity());
+        return true;
     }
 
-    @Override
-    public UserDto authenticate(Auth.SignIn member) {
-
-        var user = this.userRepository.findByUserId(member.getUserId())
-                .orElseThrow(() -> new NoUserIdException());
-
-        if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new UnmatchPasswordException();
-        }
-
-        return UserDto.of(user);
-    }
 
     @Override
     public List<UserDto> list(Auth.SignIn member) {

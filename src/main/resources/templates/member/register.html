@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+</head>
+<body>
+    <h1>회원 가입</h1>
+    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+
+
+    <form method="post" onsubmit="return validateForm()">
+
+        <div>
+            <input type="text" name="userId" placeholder="아이디 입력" required />
+        </div>
+
+        <div>
+            <input type="text" name="userName" placeholder="이름 입력" required />
+        </div>
+
+        <div>
+            <input type="tel" id="phoneInput" name="phone" placeholder="전화번호 입력 (예: 010-0000-0000)" required />
+            <span id="phoneError"></span>
+        </div>
+
+        <div>
+            <input type="email" name="email" placeholder="이메일 입력" required />
+        </div>
+
+        <div>
+            <input type="password" name="password" placeholder="비밀번호 입력" required />
+        </div>
+        <div>
+            <input type="password" name="rePassword" placeholder="비밀번호 입력 확인" required/>
+        </div>
+
+        <div>
+            <button type="submit">회원 가입</button>
+        </div>
+
+    </form>
+
+    <script>
+        function validateForm() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phoneError = document.getElementById('phoneError');
+            const phonePattern = /^010-\d{4}-\d{4}$/;
+
+            if (!phonePattern.test(phoneInput.value)) {
+                phoneError.textContent = '전화번호는 010-0000-0000 형식으로 입력해주세요.';
+                return false; // 폼 제출 중지
+            }
+
+            phoneError.textContent = ''; // 에러 메시지 초기화
+            return true; // 폼 제출 허용
+        }
+    </script>
+
+</body>
+</html>

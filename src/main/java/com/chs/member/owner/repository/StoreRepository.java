@@ -20,4 +20,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllById(Long storeId);
     @Transactional
     void deleteAllByIdAndStoreName(Long storeId, String storeName);
+
+    List<Store> findByStoreNameContaining(String query);
+
+    List<Store> findByAddrContaining(String query);
 }

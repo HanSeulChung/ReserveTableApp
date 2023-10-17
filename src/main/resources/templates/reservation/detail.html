@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+
+    <style>
+        .detail table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .detail table tr, .detail table th, .list table td {
+            border:solid 1px #000;
+        }
+
+        p {
+            text-align: center;
+            padding: 100px;
+        }
+
+        .detail .buttons {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .detail  .buttons a,.detail  .buttons {
+            border-width: 0;
+            background-color: transparent;
+            text-decoration: underline;
+            font-size: 14px;
+            line-height: 20px;
+            height: 20px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .detail .buttons .total-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .pager {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pager a.on {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+<h1 th:text="${#authentication.name} + '님의 예약 상세 정보'">예약 조회</h1>
+<div sec:authorize="hasRole('ROLE_USER')">
+    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
+</div>
+<div class="detail">
+    <table>
+        <tbody>
+        <tr>
+            <th>가게명</th>
+            <td th:text="${detail.storeName}"></td>
+        </tr>
+        <tr>
+            <th>예약시간</th>
+            <td th:text="${detail.resDt}"></td>
+        </tr>
+        <tr>
+            <th>인원</th>
+            <td th:text="${detail.people}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/auth/user/reservation/list.do">목록 이동</a>
+    <div class="buttons">
+        <p>
+            <a th:href="'edit.do?id=' + ${detail.id}">수정하기</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

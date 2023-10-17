@@ -11,6 +11,28 @@ import java.util.Map;
 
 public interface ReservationService {
 
+    // thymeleaf
+    /**
+     * 예약 등록
+     */
+    ReservationDto reserve(ReservationInput parameter);
+
+    /**
+     * 예약 삭제
+     */
+    boolean delete(String idList);
+
+    /**
+     * 예약 수정
+     */
+    boolean edit(ReservationDto parameter);
+
+    /**
+     * 예약 상세정보
+     */
+    ReservationDto getById(long id);
+    // rest api
+
     /**
      * 예약 등록
      */

@@ -8,28 +8,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface OwnerService extends UserDetailsService {
+public interface OwnerService {
     /**
      * 회원가입 정보 저장
      * @param member
      * @return
      */
 
-    OwnerDto register(Auth.SignUp member);
-
-    /**
-     * login 정보
-     * @param member
-     * @return
-     */
-
-    OwnerDto authenticate(Auth.SignIn member);
-
-
-//    /**
-//     * 입력한 이메일로 비밀번호 초기화 정보를 전송
-//     */
-//    boolean sendResetPassword(ResetPasswordInput parameter);
+    boolean register(Auth.SignUp member);
 
 
     /**

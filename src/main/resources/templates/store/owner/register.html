@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv='Pragma'content="no-cache">
+    <meta http-equiv='Expires'content="0">
+    <meta http-equiv='Cache-Control'content="no-cache">
+    <title>ReserveTableApp</title>
+</head>
+<body>
+<h1>가게 관리 - 가게 등록</h1>
+<div th:replace="/fragments/layout.html  :: fragment-owner-store-manage-menu"></div>
+
+
+<div class="detail">
+
+    <form id="submitForm" method="post" enctype="multipart/form-data">
+
+        <table>
+            <tbody>
+            <tr>
+                <th>
+                    가게명
+                </th>
+                <td>
+                    <input th:value="${detail.storeName}" type="text" name="storeName" required placeholder="가게명 입력" />
+                </td>
+            </tr>
+
+<!--            <tr>-->
+<!--                <th>가게 이미지 파일</th>-->
+<!--                <td>-->
+<!--                    <input type="file" name="file" />-->
+<!--                </td>-->
+<!--            </tr>-->
+
+
+            <tr>
+                <th>
+                    가게 전화번호
+                </th>
+                <td>
+                    <input th:value="${detail.phone}" type="text" name="phone" required placeholder="가게 전화번호 입력" />
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    주소
+                </th>
+                <td>
+                    <input th:value="${detail.addr}" type="text" name="addr" required placeholder="가게 주소 입력" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                    상세 주소
+                </th>
+                <td>
+                    <input th:value="${detail.addrDetail}" type="text" name="addrDetail" required placeholder="가게 상세 주소 입력" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                    가게 설명
+                </th>
+                <td>
+                    <input th:value="${detail.description}" type="text" name="description" required placeholder="가게 설명 입력" />
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <div class="buttons">
+            <button th:if="${editMode}" id="editButton" type="submit" onclick="removeOnBeforeUnload()"> 가게 수정 하기 </button>
+            <button th:if="${!editMode}" type="submit"onclick="removeOnBeforeUnload()"> 가게 등록 하기 </button>
+            <a href="/auth/owner/store/list.do"> 목록 이동 </a>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function removeOnBeforeUnload() {
+        window.onbeforeunload = null;
+    }
+
+    document.getElementById('editButton').addEventListener('click', removeOnBeforeUnload);
+
+    window.onbeforeunload = function(event) {
+        return "변경된 내용이 저장되지 않을 수 있습니다. 정말로 이 페이지를 떠나시겠습니까?";
+    };
+
+    window.onpopstate = function(event) {
+        return "변경된 내용이 저장되지 않을 수 있습니다. 정말로 이 페이지를 떠나시겠습니까?";
+    };
+</script>
+</body>
+</html>

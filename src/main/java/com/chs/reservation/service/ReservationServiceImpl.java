@@ -30,11 +30,64 @@ public class ReservationServiceImpl implements ReservationService{
     private final StoreService storeService;
 
     @Override
+    public ReservationDto reserve(ReservationInput parameter) {
+
+        User user = userRepository.findByUserId(parameter.getUserId())
+                .orElseThrow(() -> new NoUserIdException());
+        Store store = storeRepository.findById((long)parameter.getStoreOriginId())
+                .orElseThrow(() -> new NoStoreException());
+
+        validateReserve(parameter,parameter.getUserId());
+
+        Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
+        reservationSave.setUser(user);
+        reservationSave.setStore(store);
+        Reservation reservation = reservationRepository.save(reservationSave);
+
+        return ReservationDto.of(reservation);
+    }
+
+    @Override
+    public boolean delete(String idList) {
+        if (idList != null && idList.length() > 0) {
+            String[] ids = idList.split(",");
+            for (String x : ids) {
+                long id = 0L;
+                id = Long.parseLong(x);
+                if (id > 0) {
+                    Optional<Reservation> reservation = reservationRepository.findById(id);
+
+                    if (reservation.isPresent()) {
+                        if(reservation.get().getStatus().equals(ReservationCode.WAITING)) {
+                            reservationRepository.deleteById(id);
+                        }
+                    } else {
+                        throw new NoReservationException();
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean edit(ReservationDto parameter) {
+        return false;
+    }
+
+    @Override
+    public ReservationDto getById(long id) {
+        return reservationRepository.findById(id).map(ReservationDto::of).orElseThrow(() -> new NoReservationException());
+    }
+
+    // rest api
+
+    @Override
     public ReservationDto reserve(ReservationInput parameter, String userId) {
 
         User user = userRepository.findByUserId(userId)
                         .orElseThrow(() -> new NoUserIdException());
-        Store store = storeRepository.findById(parameter.getStoreId())
+        Store store = storeRepository.findById((long) parameter.getStoreOriginId())
                         .orElseThrow(() -> new NoStoreException());
 
         validateReserve(parameter, userId);
@@ -42,6 +95,8 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservationSave = Reservation.toEntity(ReservationDto.fromInput(parameter));
         reservationSave.setUser(user);
         reservationSave.setStore(store);
+        reservationSave.setStoreName(store.getStoreName());
+
         Reservation reservation = reservationRepository.save(reservationSave);
 
         return ReservationDto.of(reservation);
@@ -60,7 +115,7 @@ public class ReservationServiceImpl implements ReservationService{
             throw new AlreadyMyReservationException();
         }
 
-        boolean reservationExist = reservationRepository.existsByStore_IdAndResDt(parameter.getStoreId(), parameter.getResDt());
+        boolean reservationExist = reservationRepository.existsByStore_IdAndResDt((long) parameter.getStoreOriginId(), parameter.getResDt());
         if (reservationExist) {
             throw new AlreadyReservationException();
         }
@@ -91,7 +146,7 @@ public class ReservationServiceImpl implements ReservationService{
     public ReservationDto update(ReservationInput parameter, Long reservationId, String userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NoUserIdException());
-        Store store = storeRepository.findById(parameter.getStoreId())
+        Store store = storeRepository.findById((long)parameter.getStoreOriginId())
                 .orElseThrow(() -> new NoStoreException());
 
         Reservation reservationForEdit = reservationRepository.findById(reservationId)
@@ -116,6 +171,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation buildReservation = Reservation.builder()
                 .id(reservationForEdit.getId())
+                .storeName(reservationForEdit.getStoreName())
+                .storeOriginId(reservationForEdit.getStoreOriginId())
                 .status(reservationForEdit.getStatus())
                 .usingCode(reservationForEdit.getUsingCode())
                 .resDt(parameter.getResDt())
@@ -145,7 +202,7 @@ public class ReservationServiceImpl implements ReservationService{
         Map<Long, List<ReservationDto>> reservationMapByOwnerId = new HashMap<>();
 
         for (int i = 0; i < storeByOwnerId.size(); i++) {
-            reservationMapByOwnerId.put(storeByOwnerId.get(i).getStoreId() ,ReservationDto.of(reservationRepository.findAllByStore_Id(storeByOwnerId.get(i).getStoreId())));
+            reservationMapByOwnerId.put(storeByOwnerId.get(i).getId() ,ReservationDto.of(reservationRepository.findAllByStore_Id(storeByOwnerId.get(i).getId())));
         }
 
         return reservationMapByOwnerId;
@@ -182,7 +239,9 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
-
+        if (!reservation.getStatus().equals(ReservationCode.WAITING)){
+            throw new NoWaitingStatusException();
+        }
         Reservation buildReservation = Reservation.builder()
                 .id(reservation.getId())
                 .regDt(reservation.getRegDt())
@@ -203,6 +262,10 @@ public class ReservationServiceImpl implements ReservationService{
     public ReservationDto refuseReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
+
+        if (!reservation.getStatus().equals(ReservationCode.WAITING)){
+            throw new NoWaitingStatusException();
+        }
 
         Reservation buildReservation = Reservation.builder()
                 .id(reservation.getId())

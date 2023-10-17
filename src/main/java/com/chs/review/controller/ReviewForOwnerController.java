@@ -1,20 +1,21 @@
 package com.chs.review.controller;
 
 import com.chs.review.service.ReviewService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/auth/owner")
 @RequiredArgsConstructor
 public class ReviewForOwnerController {
 
     private final ReviewService reviewService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
     @GetMapping("/get/review")
     public ResponseEntity<?> getReview(@RequestParam Long reviewId,
                                        @RequestHeader("Authorization") String token) {

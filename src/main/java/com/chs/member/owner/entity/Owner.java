@@ -18,12 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "OWNER")
+@Data
 @Builder
+@Entity(name = "OWNER")
 public class Owner implements UserDetails {
     @Id
     private String userId;
@@ -39,6 +38,9 @@ public class Owner implements UserDetails {
     private MemberStatus status;  //이용가능한상태, 정지상태
     private LocalDateTime lastLoginDt;
 
+    private String resetPasswordKey;
+    private LocalDateTime resetPasswordLimitDt;
+
     @OneToMany(mappedBy = "owner")
     private List<Store> stores;
 
@@ -46,6 +48,7 @@ public class Owner implements UserDetails {
         return Owner.builder()
                 .userId(ownerDto.getUserId())
                 .userName(ownerDto.getUserName())
+                .email(ownerDto.getEmail())
                 .phone(ownerDto.getPhone())
                 .password(ownerDto.getPassword())
                 .regDt(ownerDto.getRegDt())
@@ -65,26 +68,31 @@ public class Owner implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userName;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

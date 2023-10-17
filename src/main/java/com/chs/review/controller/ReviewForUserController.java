@@ -1,22 +1,22 @@
 package com.chs.review.controller;
 
-import antlr.Token;
 import com.chs.review.dto.ReviewInput;
 import com.chs.review.service.ReviewService;
-import com.chs.security.TokenProvider;
+import com.chs.security.TokenAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping
 @RequiredArgsConstructor
 public class ReviewForUserController {
 
     private final ReviewService reviewService;
-    private final TokenProvider tokenProvider;
+    private final TokenAuthenticationProvider tokenProvider;
 
     @PostMapping("/register/review")
     public ResponseEntity<?> registerMyReview(@RequestParam Long reservationId,

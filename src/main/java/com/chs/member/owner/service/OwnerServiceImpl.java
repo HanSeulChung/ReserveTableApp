@@ -1,16 +1,20 @@
 package com.chs.member.owner.service;
 
 import com.chs.exception.Impl.*;
+import com.chs.member.model.Auth;
 import com.chs.member.owner.dto.OwnerDto;
 import com.chs.member.owner.entity.Owner;
 import com.chs.member.owner.repository.OwnerRepository;
 import com.chs.member.user.dto.MemberInput;
 import com.chs.member.user.entity.User;
-import com.chs.member.model.Auth;
 import com.chs.member.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,25 +33,9 @@ public class OwnerServiceImpl implements OwnerService{
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUserId(username);
-        Optional<Owner> owner = ownerRepository.findByUserId(username);
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
-        if (owner.isPresent()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
-            return new org.springframework.security.core.userdetails.User(
-                    owner.get().getUserId(), owner.get().getPassword(), grantedAuthorities);
-        } else if (user.isPresent()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            return new org.springframework.security.core.userdetails.User(
-                    user.get().getUserId(), user.get().getPassword(), grantedAuthorities);
-        }
-        throw  new UserNotFoundException(username);
-    }
-    @Override
-    public OwnerDto register(Auth.SignUp member) {
-        boolean exits = this.ownerRepository.existsByUserId(member.getUserId()) ;
+    public boolean register(Auth.SignUp member) {
+        boolean returnValue = false;
+        boolean exits = this.ownerRepository.existsByUserId(member.getUserId());
         if (exits) {
             throw new AlreadyExistUserException();
         }
@@ -56,22 +44,14 @@ public class OwnerServiceImpl implements OwnerService{
         if (owner.isPresent() || user.isPresent()) {
             throw new AlreadyExistEmailException();
         }
+
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.ownerRepository.save(member.toOwnerEntity());
-        return OwnerDto.of(result);
+        this.ownerRepository.save(member.toOwnerEntity());
+        returnValue = true;
+
+        return returnValue;
     }
 
-    @Override
-    public OwnerDto authenticate(Auth.SignIn member) {
-        var user = this.ownerRepository.findByUserId(member.getUserId())
-                .orElseThrow(() -> new NoUserIdException());
-
-        if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new UnmatchPasswordException();
-        }
-
-        return OwnerDto.of(user);
-    }
 
     @Override
     public List<OwnerDto> list(Auth.SignIn member) {

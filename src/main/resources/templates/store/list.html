@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>가게 전체 조회</h1>
+<div sec:authorize="hasRole('ROLE_USER')">
+    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
+</div>
+<div sec:authorize="hasRole('ROLE_ANONYMOUS')">
+    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+</div>
+
+<form id="searchForm" action="/store/search" method="get">
+    <input type="text" name="query" id="queryInput" placeholder="검색어를 입력하세요">
+    <label><input type="radio" name="searchType" value="name" checked> 가게 이름으로 검색</label>
+    <label><input type="radio" name="searchType" value="address"> 가게 주소로 검색</label>
+    <button type="submit">검색</button>
+</form>
+<table th:if="${#lists.size(list) > 0}">
+    <thead>
+    <tr>
+        <th>
+            가게 ID
+        </th>
+        <th>
+            가게명
+        </th>
+        <th>
+            주소
+        </th>
+        <th>
+            상세 주소
+        </th>
+        <th>
+            가게 설명
+        </th>
+        <th>
+            등록일
+        </th>
+        <!-- Add more table headers as needed -->
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over the storeDtoList and display store information -->
+    <tr th:each="storeDto : ${list}">
+        <td th:text="${storeDto.id}">1</td>
+        <td>
+            <p>
+                <a th:href="'detail.do?id=' + ${storeDto.id}" th:text="${storeDto.storeName}">가게명</a>
+            </p>
+        </td>
+        <td th:text="${storeDto.addr}">주소</td>
+        <td th:text="${storeDto.addrDetail}">상세 주소</td>
+        <td th:text="${storeDto.description}">가게 설명</td>
+        <td>
+            <p th:text="${storeDto.regDt}">2021.01.01</p>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${#lists.size(list) == 0}">
+    <p>검색된 가게가 없습니다.</p>
+    <a href="javascript:history.back()">뒤로 가기</a>
+</div>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#searchForm').submit(function(event) {
+            event.preventDefault();  // 폼 제출 기본 동작 막기
+
+            var query = $('#queryInput').val();
+            var searchBy = $('input[name="searchType"]:checked').val();
+
+            if (query.length >= 2) {
+                $.ajax({
+                    url: '/autocomplete?query=' + query + '&searchBy=' + searchBy,
+                    type: 'GET',
+                    success: function(data) {
+                        var searchResults = $('#searchResults');
+                        searchResults.empty();
+                        for (var i = 0; i < data.length; i++) {
+                            var resultItem = $('<div>' + data[i] + '</div>');
+                            searchResults.append(resultItem);
+                        }
+                    }
+                });
+            } else {
+                // 입력이 2글자 미만일 때 검색 결과를 숨김
+                var searchResults = $('#searchResults');
+                searchResults.empty();
+            }
+        });
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+

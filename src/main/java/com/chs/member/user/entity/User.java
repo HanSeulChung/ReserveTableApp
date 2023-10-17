@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@ToString
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "USER")
+@Data
 @Builder
 public class User implements UserDetails {
     @Id
@@ -40,16 +40,21 @@ public class User implements UserDetails {
 
     private int penalty;
 
+    private String resetPasswordKey;
+    private LocalDateTime resetPasswordLimitDt;
+
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 
+
     public static User toEntity(UserDto userDto) {
         return User.builder()
                 .userId(userDto.getUserId())
                 .userName(userDto.getUserName())
+                .email(userDto.getEmail())
                 .phone(userDto.getPhone())
                 .password(userDto.getPassword())
                 .penalty(userDto.getPenalty())
@@ -70,27 +75,32 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userName;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
 }
