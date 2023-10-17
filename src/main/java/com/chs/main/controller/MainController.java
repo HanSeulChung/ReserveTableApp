@@ -32,12 +32,8 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @GetMapping("/")
-    public String index(Model model) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+    public String index() {
 
-        model.addAttribute("authorities", authorities);
         return "index";
     }
 

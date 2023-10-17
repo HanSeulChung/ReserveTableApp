@@ -13,6 +13,13 @@ public interface StoreService {
 
     // 타임리프용
     /**
+     * 자동완성
+     */
+    List<String> getAutoCompleteResultsByName(String query);
+
+    List<String> getAutoCompleteResultsByAddress(String query);
+
+    /**
      * 가게 등록
      */
     boolean add(StoreInput parameter, String ownerId);

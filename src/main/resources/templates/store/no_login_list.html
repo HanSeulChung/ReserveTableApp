@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>ReserveTableApp</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    /* 스타일링을 위한 CSS */
+    #searchResults, #autoCompleteDropdown {
+      display: none;
+      position: absolute;
+      width: 100%;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    /* 애니메이션 효과를 위한 CSS */
+    .show-results, .show-autocomplete {
+      display: block !important;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<h1>가게 전체 조회</h1>
+<div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+
+<form id="searchForm" action="/store/search" method="get">
+  <input type="text" name="query" id="queryInput" placeholder="검색어를 입력하세요">
+  <label><input type="radio" name="searchType" value="name" checked> 가게 이름으로 검색</label>
+  <label><input type="radio" name="searchType" value="address"> 가게 주소로 검색</label>
+  <button type="submit" id="searchButton">검색</button>
+</form>
+
+<table th:if="${#lists.size(list) > 0}">
+  <thead>
+  <tr>
+    <th>
+      가게 ID
+    </th>
+    <th>
+      가게명
+    </th>
+    <th>
+      주소
+    </th>
+    <th>
+      상세 주소
+    </th>
+    <th>
+      가게 설명
+    </th>
+    <th>
+      등록일
+    </th>
+    <!-- Add more table headers as needed -->
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Iterate over the storeDtoList and display store information -->
+  <tr th:each="storeDto : ${list}">
+    <td th:text="${storeDto.id}">1</td>
+    <td>
+      <p>
+        <a th:href="'detail.do?id=' + ${storeDto.id}" th:text="${storeDto.storeName}">가게명</a>
+      </p>
+    </td>
+    <td th:text="${storeDto.addr}">주소</td>
+    <td th:text="${storeDto.addrDetail}">상세 주소</td>
+    <td th:text="${storeDto.description}">가게 설명</td>
+    <td>
+      <p th:text="${storeDto.regDt}">2021.01.01</p>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div th:if="${#lists.size(list) == 0}">
+  <p>검색된 가게가 없습니다.</p>
+  <a href="javascript:history.back()">뒤로 가기</a>
+</div>
+
+<div id="searchResults" class="show-results"></div>
+<div id="autoCompleteDropdown" class="show-autocomplete"></div>
+
+<script>
+  $(document).ready(function() {
+    $('#queryInput').on('input', function() {
+      var query = $(this).val();
+      autoComplete(query);
+    });
+
+    $('#searchForm').submit(function(event) {
+      event.preventDefault();  // 폼 제출 기본 동작 막기
+
+      var query = $('#queryInput').val();
+      var searchBy = $('input[name="searchType"]:checked').val();
+
+      if (query.length >= 2) {
+        $.ajax({
+          url: '/autocomplete?query=' + query + '&searchBy=' + searchBy,
+          type: 'GET',
+          success: function(data) {
+            var searchResults = $('#searchResults');
+            searchResults.empty();
+            for (var i = 0; i < data.length; i++) {
+              var resultItem = $('<div>' + data[i] + '</div>');
+              searchResults.append(resultItem);
+            }
+            searchResults.addClass('show-results');
+          }
+        });
+      } else {
+        // 입력이 2글자 미만일 때 검색 결과를 숨김
+        var searchResults = $('#searchResults');
+        searchResults.removeClass('show-results');
+      }
+    });
+  });
+
+  function autoComplete(query) {
+    if (query.length >= 2) {
+      $.ajax({
+        url: '/autocomplete?query=' + query,
+        type: 'GET',
+        success: function(data) {
+          var autoCompleteDropdown = $('#autoCompleteDropdown');
+          autoCompleteDropdown.empty();
+          for (var i = 0; i < data.length; i++) {
+            var option = $('<div class="autocomplete-option">' + data[i] + '</div>');
+            option.click(function() {
+              $('#queryInput').val($(this).text());
+              $('#autoCompleteDropdown').empty();
+              $('#searchForm').submit();
+            });
+            autoCompleteDropdown.append(option);
+          }
+          autoCompleteDropdown.addClass('show-autocomplete');
+        }
+      });
+    } else {
+      // 입력이 2글자 미만일 때 자동 완성 결과를 숨김
+      var autoCompleteDropdown = $('#autoCompleteDropdown');
+      autoCompleteDropdown.removeClass('show-autocomplete');
+    }
+  }
+</script>
+</body>
+</html>

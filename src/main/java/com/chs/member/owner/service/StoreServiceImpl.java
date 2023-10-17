@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -24,7 +25,21 @@ public class StoreServiceImpl implements StoreService{
     private final OwnerRepository ownerRepository;
 
     // 타임리프용
+    public List<String> getAutoCompleteResultsByName(String query) {
+        // 가게 이름에서 검색어(query)를 포함하는 가게들을 찾아서 반환
+        List<Store> stores = storeRepository.findByStoreNameContaining(query);
+        return stores.stream()
+                .map(Store::getStoreName)
+                .collect(Collectors.toList());
+    }
 
+    public List<String> getAutoCompleteResultsByAddress(String query) {
+        // 가게 주소에서 검색어(query)를 포함하는 가게들을 찾아서 반환
+        List<Store> stores = storeRepository.findByAddrContaining(query);
+        return stores.stream()
+                .map(Store::getAddr)
+                .collect(Collectors.toList());
+    }
     @Override
     public boolean add(StoreInput parameter, String ownerId) {
 

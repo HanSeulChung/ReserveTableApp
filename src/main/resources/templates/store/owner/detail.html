@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>ReserveTableApp</title>
@@ -53,17 +53,7 @@
 
 <body>
 <h1>가게 상세 정보</h1>
-<div sec:authorize="hasRole('ROLE_OWNER')">
-    <div th:replace="/fragments/layout.html :: fragment-owner-store-manage-menu"></div>
-</div>
-
-<div sec:authorize="hasRole('ROLE_USER')">
-    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
-</div>
-<div sec:authorize="hasRole('ROLE_ANONYMOUS')">
-    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
-</div>
-
+<div th:replace="/fragments/layout.html  :: fragment-owner-store-manage-menu"></div>
 <div class="detail">
     <table>
         <tbody>
@@ -90,12 +80,12 @@
         </tbody>
     </table>
 
-    <a href="/store/all">목록 이동</a>
-
-    <div sec:authorize="hasRole('ROLE_USER')">
-        <a th:href="'/reserve/' + ${detail.id}">예약하기</a>
+    <a href="/auth/owner/store/list.do">목록 이동</a>
+    <div class="buttons">
+        <p>
+            <a th:href="'edit.do?id=' + ${detail.id}">수정하기</a>
+        </p>
     </div>
-
 </div>
 </body>
 </html>

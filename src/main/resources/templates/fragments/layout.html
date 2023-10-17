@@ -16,7 +16,7 @@
       |
       <a href="/auth/signup">User용 회원 가입</a>
       |
-      <a href="/store/all">가게 목록</a>
+      <a href="/no-auth/store/all">가게 목록</a>
 
     </div>
     <hr/>
@@ -40,11 +40,11 @@
   <div th:fragment="fragment-user-body-menu">
     <a href="/">홈</a>
     |
-    <a href="/admin/member/list.do"> 가게 조회 </a>
+    <a href="/store/all"> 가게 조회 </a>
     |
-    <a href="/admin/category/list.do"> 예약 관리 </a>
+    <a href="/auth/user/reservation/list.do"> 예약 관리 </a>
     |
-    <a href="/admin/category/list.do"> 리뷰 관리 </a>
+    <a href="/auth/user/review"> 리뷰 관리 </a>
     |
     <a href="/auth/logout"> 로그아웃 </a>
     <br/>
@@ -55,9 +55,9 @@
   <div th:fragment="fragment-owner-store-manage-menu">
     <a href="/">홈</a>
     |
-    <a href="/auth/owner/register/store"> 가게 등록 </a>
+    <a href="/auth/owner/store/add.do"> 가게 등록 </a>
     |
-    <a href="/admin/category/list.do"> 가게 조회 </a>
+    <a href="/auth/owner/store/list.do"> 가게 조회 </a>
     |
     <a href="/auth/logout"> 로그아웃 </a>
     <br/>

@@ -15,14 +15,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +39,7 @@ public class StoreCRUDController {
 
         model.addAttribute("authorities", authorities);
         model.addAttribute("list", stores);
-        return "store/store_manage";
+        return "store/owner/store_manage";
     }
 
 
@@ -72,7 +67,7 @@ public class StoreCRUDController {
         model.addAttribute("editMode", editMode);
         model.addAttribute("detail", detail);
 
-        return "store/register";
+        return "store/owner/register";
     }
 
 
@@ -125,6 +120,15 @@ public class StoreCRUDController {
         return "redirect:/auth/owner/store/list.do";
     }
 
+    @GetMapping("/auth/owner/store/detail.do")
+    public String detail(Model model, StoreInput parameter) {
+        long id = parameter.getId();
+        StoreDto existStore = storeService.getById(id);
+
+        model.addAttribute("detail", existStore);
+
+        return "store/owner/detail";
+    }
 
     @PostMapping("/auth/owner/store/delete.do")
     public String delete(Model model, HttpServletRequest request

@@ -6,18 +6,19 @@
 </head>
 <body>
 
-<div th:if="${#strings.contains(authorities, 'ROLE_OWNER')}">
+<div sec:authorize="hasRole('ROLE_OWNER')">
     <h1>Owner 메인 페이지</h1>
-    <div th:replace="/fragments/layout.html  :: fragment-owner-body-menu"></div>
-</div>
-<div th:if="${#strings.contains(authorities, 'ROLE_USER')}">
-    <h1>User 페이지</h1>
-    <div th:replace="/fragments/layout.html  :: fragment-user-body-menu"></div>
+    <div th:replace="/fragments/layout.html :: fragment-owner-store-manage-menu"></div>
 </div>
 
-<div th:if="${#strings.contains(authorities, 'ROLE_ANONYMOUS')}">
-    <h1>메인 페이지</h1>
-    <div th:replace="/fragments/layout.html  :: fragment-body-before-login-menu"></div>
+<div sec:authorize="hasRole('ROLE_USER')">
+    <h1>User 메인 페이지</h1>
+    <div th:replace="/fragments/layout.html :: fragment-user-body-menu"></div>
 </div>
+<div sec:authorize="hasRole('ROLE_ANONYMOUS')">
+    <h1>메인 페이지</h1>
+    <div th:replace="/fragments/layout.html :: fragment-body-before-login-menu"></div>
+</div>
+
 </body>
 </html>
