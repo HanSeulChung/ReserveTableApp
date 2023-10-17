@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+
+</head>
+<body>
+<h1 th:text="${#authentication.name} + '님의 가게 목록'"></h1>
+<div sec:authorize="hasRole('ROLE_OWNER')">
+    <div th:replace="/fragments/layout.html :: fragment-owner-body-menu"></div>
+</div>
+<ul>
+    <li th:each="store : ${stores}">
+        <a th:href="@{'/auth/owner/reservation/store/' + ${store.id}}" th:text="${store.storeName}">가게명</a>
+    </li>
+</ul>
+</body>
+</html>

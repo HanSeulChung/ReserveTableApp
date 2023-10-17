@@ -8,7 +8,7 @@
 
 <div sec:authorize="hasRole('ROLE_OWNER')">
     <h1>Owner 메인 페이지</h1>
-    <div th:replace="/fragments/layout.html :: fragment-owner-store-manage-menu"></div>
+    <div th:replace="/fragments/layout.html :: fragment-owner-body-menu"></div>
 </div>
 
 <div sec:authorize="hasRole('ROLE_USER')">

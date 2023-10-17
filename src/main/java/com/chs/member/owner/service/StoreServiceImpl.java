@@ -111,6 +111,11 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public List<StoreDto> getAllStores(String ownerId) {
+        return StoreDto.of(storeRepository.findAllByOwner_UserId(ownerId));
+    }
+
+    @Override
     public StoreDto registerStore(StoreInput parameter, String ownerId) {
         boolean storeExist = storeRepository.existsByStoreNameAndAddrDetail(parameter.getStoreName(), parameter.getAddrDetail());
         if (storeExist) {

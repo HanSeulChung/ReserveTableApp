@@ -89,4 +89,5 @@ public interface StoreService {
     List<StoreDto> readStore(String ownerId);
 
 
+    List<StoreDto> getAllStores(String ownerId);
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ReserveTableApp</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+</head>
+<body>
+<h1 th:text="${#authentication.name} + '님의 '+ ${storeName} +' 예약 목록'"></h1>
+<div sec:authorize="hasRole('ROLE_OWNER')">
+    <div th:replace="/fragments/layout.html :: fragment-owner-body-menu"></div>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>예약 사용자</th>
+        <th>예약 시간</th>
+        <th>예약 인원</th>
+        <th>예약 상태</th>
+        <th>상태 변경</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="reservation : ${reservations}">
+        <td>
+            <input type="checkbox" th:value="${reservation.id}" class="reservation-checkbox">
+        </td>
+        <td th:text="${reservation.userId}"></td>
+        <td th:text="${reservation.resDt}"></td>
+        <td th:text="${reservation.people}"></td>
+        <td th:text="${reservation.status}"></td>
+
+        <td>
+            <button onclick="approveOrRefuseReservation('approve')">예약 승인</button>
+            <button onclick="approveOrRefuseReservation('refuse')">예약 거절</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:inline="javascript">
+    function approveOrRefuseReservation(action) {
+        const selectedReservationIds = [];
+        $('.reservation-checkbox:checked').each(function () {
+            selectedReservationIds.push($(this).val());
+        });
+
+        if (selectedReservationIds.length === 0) {
+            console.error('예약 ' + action + '할 예약을 선택하세요.');
+            return;
+        }
+
+        const url = "/auth/owner/reservation/" + action + "/" + selectedReservationIds.join(',');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            success: function(data) {
+                console.log('예약 ' + action + ' 성공:', data);
+            },
+            error: function() {
+                console.error('예약 ' + action + ' 중 오류 발생');
+            }
+        });
+    }
+</script>
+</body>
+</html>

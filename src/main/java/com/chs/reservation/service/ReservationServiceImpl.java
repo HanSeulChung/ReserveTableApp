@@ -239,7 +239,9 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
 
-
+        if (!reservation.getStatus().equals(ReservationCode.WAITING)){
+            throw new NoWaitingStatusException();
+        }
         Reservation buildReservation = Reservation.builder()
                 .id(reservation.getId())
                 .regDt(reservation.getRegDt())
@@ -260,6 +262,10 @@ public class ReservationServiceImpl implements ReservationService{
     public ReservationDto refuseReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoReservationException());
+
+        if (!reservation.getStatus().equals(ReservationCode.WAITING)){
+            throw new NoWaitingStatusException();
+        }
 
         Reservation buildReservation = Reservation.builder()
                 .id(reservation.getId())
