@@ -10,6 +10,7 @@
   </br>
   <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
   <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+  <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white">
   <img src="https://img.shields.io/badge/Spring_Data_JPA-6DB33?style=for-the-badge&logo=mariaDB&logoColor=white"> 
   </br>  
   <img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white">
@@ -32,10 +33,38 @@
 ![image](https://github.com/HanSeulChung/ReserveTableApp/assets/94779505/cb82aa17-c7a8-4dc3-ba8b-ab294ba78ba5)
 
 ## 타임리프 구현
-리뷰 작성 및 리뷰 확인은 추후 추가해야함.
 
-## API 문서
-이 프로젝트는 다음과 같은 API 엔드포인트를 제공합니다.
+![로그인](https://github.com/HanSeulChung/ReserveTableApp/assets/94779505/846f92fd-746b-493e-b8da-ce1b89a7a3d7)
+* Spring Security를 이용해 메인페이지를 달리 할 수 있습니다.
+  * 로그인 안했을 경우
+  * Owner용 로그인
+  * User용 로그인  
+
+* 공통
+  * Owner 전용 회원가입, User 전용 회원가입
+  * 로그인
+
+* Owner 전용
+![예약승인](https://github.com/HanSeulChung/ReserveTableApp/assets/94779505/f7c9eb49-0b11-4bfd-84af-c739be62635f)
+  * 가게 추가, 삭제, 수정
+  * 자신의 가게에 예약이 걸려있는 목록 확인 기능
+  * 예약 승인, 거절 기능
+    
+* User 전용
+![예약](https://github.com/HanSeulChung/ReserveTableApp/assets/94779505/5dc3535b-bd99-484b-bfa4-7e60e60c0ebd)
+  * 추가된 모든 가게 목록
+  * 예약 기능, 예약 삭제, 수정 기능(Owner가 예약 승인, 거절하지 않은 초기 예약 상태에서만 가능)
+
+
+리뷰 작성 및 리뷰 확인은 추후 추가.
+
+<details>
+<summary><h2>API 문서</h2></summary>
+  <div markdown=1>
+    
+이 프로젝트는 타임리프 구현 전에 다음과 같은 API 엔드포인트를 제공 했으며 이를 기반으로 간단한 타임리프 View를 추가하였습니다.
+
+
 ### 공통 인증
 * 회원가입
   + 가입시 아이디와 이메일은 같은 경우 가입이 불가능 함
@@ -236,4 +265,6 @@ DELETE /delete/review?reviewId=1
 GET /get/review?reviewId=1
 
 #### 리뷰 전체 조회
+</div>
+</details>
 
